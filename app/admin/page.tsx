@@ -110,6 +110,7 @@ export default function AdminPage() {
     nameAr: string;
     priceAdjustment: number;
   }>>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   // Users
   const [users, setUsers] = useState<User[]>([]);
@@ -280,6 +281,47 @@ export default function AdminPage() {
       setVariants([]);
     }
     setShowProductDialog(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Vérifier le type de fichier
+    if (!file.type.startsWith('image/')) {
+      toast.error('Veuillez sélectionner une image');
+      return;
+    }
+
+    // Vérifier la taille (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('L\'image ne doit pas dépasser 5MB');
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProductForm({ ...productForm, image: data.url });
+        toast.success('Image uploadée avec succès');
+      } else {
+        toast.error('Erreur lors de l\'upload');
+      }
+    } catch (error) {
+      toast.error('Erreur lors de l\'upload');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const saveProduct = async () => {
@@ -820,14 +862,72 @@ export default function AdminPage() {
             </div>
 
             <div>
-              <Label>URL de l'image *</Label>
-              <Input
-                value={productForm.image}
-                onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
-                placeholder="https://..."
-                className="mt-2"
-                required
-              />
+              <Label>Image du produit *</Label>
+              <div className="mt-2 space-y-3">
+                {/* Bouton d'upload */}
+                <div className="flex gap-2">
+                  <label
+                    htmlFor="image-upload"
+                    className="flex-1 cursor-pointer"
+                  >
+                    <div
+                      className="border-2 border-dashed rounded-lg p-4 text-center hover:border-[#F8A6B0] transition-colors"
+                    >
+                      {uploadingImage ? (
+                        <p className="text-gray-600">Upload en cours...</p>
+                      ) : (
+                        <>
+                          <p className="text-sm text-gray-600">
+                            Cliquez pour uploader une image
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            PNG, JPG, WEBP (max 5MB)
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </label>
+                  <input
+                    id="image-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                    disabled={uploadingImage}
+                  />
+                </div>
+
+                {/* Aperçu de l'image */}
+                {productForm.image && (
+                  <div className="relative">
+                    <img
+                      src={productForm.image}
+                      alt="Aperçu"
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="destructive"
+                      className="absolute top-2 right-2"
+                      onClick={() => setProductForm({ ...productForm, image: '' })}
+                    >
+                      Supprimer
+                    </Button>
+                  </div>
+                )}
+
+                {/* Option manuelle */}
+                <div>
+                  <Label className="text-xs text-gray-600">Ou entrez une URL manuellement</Label>
+                  <Input
+                    value={productForm.image}
+                    onChange={(e) => setProductForm({ ...productForm, image: e.target.value })}
+                    placeholder="https://..."
+                    className="mt-1"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-4">
