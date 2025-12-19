@@ -59,8 +59,9 @@ export function Navbar() {
             <LanguageSwitcher />
           </div>
 
-          {/* Mobile Menu Button & Cart */}
+          {/* Mobile Menu Button, Cart & Language */}
           <div className="flex md:hidden items-center gap-3">
+            <LanguageSwitcher />
             <Link href="/cart" className="relative hover:text-[#F8A6B0] transition-colors">
               <ShoppingCart className="h-6 w-6" />
               {itemCount > 0 && (
@@ -115,11 +116,6 @@ export function Navbar() {
               >
                 {t.nav.contact}
               </Link>
-              
-              {/* Mobile Language Switcher */}
-              <div className="pt-2 border-t">
-                <LanguageSwitcher />
-              </div>
             </div>
           </div>
         )}
