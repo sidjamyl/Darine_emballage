@@ -3,7 +3,7 @@
 import { useLanguage } from '@/lib/language-context';
 
 export default function AboutPage() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
 
   return (
     <div className="container mx-auto px-4 py-16">
@@ -21,10 +21,10 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-2 gap-8 mt-8">
               <div>
                 <h2 className="text-2xl font-semibold mb-4" style={{ color: '#F8A6B0' }}>
-                  {t.locale === 'ar' ? 'مهمتنا' : 'Notre Mission'}
+                  {locale === 'ar' ? 'مهمتنا' : 'Notre Mission'}
                 </h2>
                 <p style={{ color: '#383738' }}>
-                  {t.locale === 'ar' 
+                  {locale === 'ar' 
                     ? 'نسعى لتقديم أفضل منتجات التغليف والمواد الغذائية بجودة عالية وأسعار تنافسية، مع خدمة توصيل سريعة وموثوقة في جميع أنحاء الجزائر.'
                     : 'Nous nous efforçons de fournir les meilleurs produits d\'emballage et alimentaires de haute qualité à des prix compétitifs, avec un service de livraison rapide et fiable dans toute l\'Algérie.'}
                 </p>
@@ -32,13 +32,13 @@ export default function AboutPage() {
 
               <div>
                 <h2 className="text-2xl font-semibold mb-4" style={{ color: '#F8A6B0' }}>
-                  {t.locale === 'ar' ? 'قيمنا' : 'Nos Valeurs'}
+                  {locale === 'ar' ? 'قيمنا' : 'Nos Valeurs'}
                 </h2>
                 <ul className="space-y-2" style={{ color: '#383738' }}>
-                  <li>✓ {t.locale === 'ar' ? 'الجودة أولاً' : 'Qualité avant tout'}</li>
-                  <li>✓ {t.locale === 'ar' ? 'خدمة عملاء ممتازة' : 'Service client excellent'}</li>
-                  <li>✓ {t.locale === 'ar' ? 'توصيل سريع وآمن' : 'Livraison rapide et sûre'}</li>
-                  <li>✓ {t.locale === 'ar' ? 'أسعار تنافسية' : 'Prix compétitifs'}</li>
+                  <li>✓ {locale === 'ar' ? 'الجودة أولاً' : 'Qualité avant tout'}</li>
+                  <li>✓ {locale === 'ar' ? 'خدمة عملاء ممتازة' : 'Service client excellent'}</li>
+                  <li>✓ {locale === 'ar' ? 'توصيل سريع وآمن' : 'Livraison rapide et sûre'}</li>
+                  <li>✓ {locale === 'ar' ? 'أسعار تنافسية' : 'Prix compétitifs'}</li>
                 </ul>
               </div>
             </div>
@@ -47,15 +47,15 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-3 gap-6">
             <div className="text-center p-6 rounded-lg" style={{ backgroundColor: '#F8A6B0' }}>
               <div className="text-4xl font-bold text-white mb-2">500+</div>
-              <div className="text-white">{t.locale === 'ar' ? 'منتج' : 'Produits'}</div>
+              <div className="text-white">{locale === 'ar' ? 'منتج' : 'Produits'}</div>
             </div>
             <div className="text-center p-6 rounded-lg" style={{ backgroundColor: '#F1E5B4' }}>
               <div className="text-4xl font-bold mb-2" style={{ color: '#383738' }}>1000+</div>
-              <div style={{ color: '#383738' }}>{t.locale === 'ar' ? 'عميل راضٍ' : 'Clients satisfaits'}</div>
+              <div style={{ color: '#383738' }}>{locale === 'ar' ? 'عميل راضٍ' : 'Clients satisfaits'}</div>
             </div>
             <div className="text-center p-6 rounded-lg" style={{ backgroundColor: '#F8A6B0' }}>
               <div className="text-4xl font-bold text-white mb-2">48</div>
-              <div className="text-white">{t.locale === 'ar' ? 'ولاية مُغطاة' : 'Wilayas couvertes'}</div>
+              <div className="text-white">{locale === 'ar' ? 'ولاية مُغطاة' : 'Wilayas couvertes'}</div>
             </div>
           </div>
         </div>
