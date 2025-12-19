@@ -128,7 +128,7 @@ export default function ContactPage() {
                   <h3 className="font-semibold mb-1" style={{ color: '#383738' }}>
                     {t.contact.phone}
                   </h3>
-                  <p className="text-gray-600">+213 XXX XXX XXX</p>
+                  <p className="text-gray-600">+213 540153721</p>
                 </div>
               </div>
 
@@ -138,21 +138,11 @@ export default function ContactPage() {
                   <h3 className="font-semibold mb-1" style={{ color: '#383738' }}>
                     {t.contact.whatsapp}
                   </h3>
-                  <p className="text-gray-600">+213 XXX XXX XXX</p>
+                  <p className="text-gray-600">+213 540153721</p>
                 </div>
               </div>
 
-              <div className="flex items-start gap-4 mb-4">
-                <Mail className="h-6 w-6 mt-1" style={{ color: '#F8A6B0' }} />
-                <div>
-                  <h3 className="font-semibold mb-1" style={{ color: '#383738' }}>
-                    {t.contact.email}
-                  </h3>
-                  <p className="text-gray-600">contact@darineemballage.com</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
+               <div className="flex items-start gap-4">
                 <MapPin className="h-6 w-6 mt-1" style={{ color: '#F8A6B0' }} />
                 <div>
                   <h3 className="font-semibold mb-1" style={{ color: '#383738' }}>
@@ -172,7 +162,7 @@ export default function ContactPage() {
                 {locale === 'ar' ? 'ساعات العمل' : 'Horaires d\'ouverture'}
               </h3>
               <div className="space-y-2 text-sm" style={{ color: '#383738' }}>
-                <p>{locale === 'ar' ? 'السبت - الخميس: 9:00 - 18:00' : 'Samedi - Jeudi: 9h00 - 18h00'}</p>
+                <p>{locale === 'ar' ? 'السبت - الخميس: 8:00 - 18:00' : 'Samedi - Jeudi: 8h00 - 18h00'}</p>
                 <p>{locale === 'ar' ? 'الجمعة: مغلق' : 'Vendredi: Fermé'}</p>
               </div>
             </CardContent>

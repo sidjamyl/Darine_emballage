@@ -6,19 +6,42 @@ import { ProductCard } from '@/components/product-card';
 import { ReviewsSlider } from '@/components/reviews-slider';
 import { useEffect, useState } from 'react';
 
+// Configuration des slides hero (images statiques)
+// Pour ajouter une nouvelle image, ajoutez-la dans le dossier public/ et ajoutez une entrée ici
+const HERO_SLIDES = [
+  {
+    id: '1',
+    image: '/hero1.jpg',
+    titleFr: 'Bienvenue chez Darine Emballage',
+    titleAr: 'مرحبا بكم في دارين للتغليف',
+    subtitleFr: ' Vente d\'emballage et produits alimentaires',
+    subtitleAr: 'بيع التغليف والمنتجات الغذائية الخاصة بك',
+  },
+  {
+    id: '2',
+    image: '/hero2.jpg',
+    titleFr: 'Qualité et Innovation',
+    titleAr: 'الجودة والابتكار',
+    subtitleFr: 'Des produits de qualité ',
+    subtitleAr: 'منتجات عالية الجودة ',
+  },
+  // Ajoutez ici d'autres slides si nécessaire :
+  // {
+  //   id: '3',
+  //   image: '/hero3.jpg',
+  //   titleFr: 'Votre titre',
+  //   titleAr: 'العنوان الخاص بك',
+  //   subtitleFr: 'Votre sous-titre',
+  //   subtitleAr: 'العنوان الفرعي الخاص بك',
+  // },
+];
+
 export default function Home() {
   const { t } = useLanguage();
-  const [heroSlides, setHeroSlides] = useState([]);
   const [popularProducts, setPopularProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    // Fetch hero slides
-    fetch('/api/hero-slides')
-      .then((res) => res.json())
-      .then((data) => setHeroSlides(data))
-      .catch(() => setHeroSlides([]));
-
     // Fetch popular products
     fetch('/api/products?popular=true')
       .then((res) => res.json())
@@ -35,7 +58,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Slider */}
-      <HeroSlider slides={heroSlides} />
+      <HeroSlider slides={HERO_SLIDES} />
 
       {/* Popular Products */}
       <section className="container mx-auto px-4 py-16">

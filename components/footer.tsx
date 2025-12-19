@@ -55,9 +55,8 @@ export function Footer() {
               {t.nav.contact}
             </h4>
             <ul className="space-y-2 text-sm" style={{ color: '#383738' }}>
-              <li>{t.contact.phone}: +213 XXX XXX XXX</li>
-              <li>{t.contact.email}: contact@darineemballage.com</li>
-              <li>{t.contact.address}: Alger, Algérie</li>
+              <li>{t.contact.phone}: +213 540153721</li>
+              <li>{t.contact.address}: El-Biar Alger, Algérie</li>
             </ul>
           </div>
         </div>
