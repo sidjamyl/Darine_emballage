@@ -1,8 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Darine Emballage - Site E-commerce
 
-## Getting Started
+Site e-commerce complet bilingue (FR/AR) pour Darine Emballage, spécialisé dans les produits d'emballage et alimentaires.
 
-First, run the development server:
+## 🚀 Technologies
+
+- **Next.js 16** - Framework React
+- **TypeScript** - Langage typé
+- **Prisma 5.22** - ORM pour la base de données
+- **Better Auth** - Authentification sécurisée
+- **shadcn/ui** - Composants UI
+- **Tailwind CSS** - Styles
+- **SQLite** - Base de données (dev)
+
+## 🎨 Palette de Couleurs
+
+- Rose: `#F8A6B0`
+- Jaune: `#F1E5B4`
+- Noir (texte): `#383738`
+
+## 📁 Structure du Site
+
+### Pages Publiques
+
+- **/** - Page d'accueil avec hero slider, produits populaires et avis clients
+- **/catalog** - Catalogue complet avec recherche et filtres
+- **/about** - Page à propos
+- **/contact** - Formulaire de contact
+- **/cart** - Panier avec calcul des frais de livraison
+
+### Pages Admin
+
+- **/admin** - Panel d'administration (authentification requise)
+
+## 🌍 Internationalisation
+
+Le site est entièrement bilingue avec support RTL pour l'arabe.
+
+## 🛠️ Installation
+
+First, install dependencies and run the development server:
 
 ```bash
 npm run dev
