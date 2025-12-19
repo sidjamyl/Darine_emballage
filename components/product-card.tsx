@@ -102,11 +102,20 @@ export function ProductCard({ product }: ProductCardProps) {
   const handleConfirmVariant = () => {
     if (!selectedVariant) return;
 
-    const variant = product.variants?.find((v) => v.id === selectedVariant);
-    if (!variant) return;
+    let variantName = '';
+    let finalPrice = 0;
 
-    const variantName = locale === 'ar' ? variant.nameAr : variant.nameFr;
-    const finalPrice = product.price + variant.priceAdjustment;
+    if (selectedVariant === 'base') {
+      // Produit de base
+      variantName = locale === 'ar' ? 'قياسي' : 'Standard';
+      finalPrice = product.price;
+    } else {
+      // Variante spécifique
+      const variant = product.variants?.find((v) => v.id === selectedVariant);
+      if (!variant) return;
+      variantName = locale === 'ar' ? variant.nameAr : variant.nameFr;
+      finalPrice = variant.priceAdjustment;
+    }
 
     addItem({
       productId: product.id,
@@ -182,9 +191,14 @@ export function ProductCard({ product }: ProductCardProps) {
                   <SelectValue placeholder={t.products.selectVariant} />
                 </SelectTrigger>
                 <SelectContent>
+                  {/* Produit de base */}
+                  <SelectItem key="base" value="base">
+                    {locale === 'ar' ? 'قياسي' : 'Standard'} - {product.price.toFixed(2)} DA
+                  </SelectItem>
+                  {/* Variantes */}
                   {product.variants?.map((variant) => {
                     const variantName = locale === 'ar' ? variant.nameAr : variant.nameFr;
-                    const variantPrice = product.price + variant.priceAdjustment;
+                    const variantPrice = variant.priceAdjustment;
                     return (
                       <SelectItem key={variant.id} value={variant.id}>
                         {variantName} - {variantPrice.toFixed(2)} DA

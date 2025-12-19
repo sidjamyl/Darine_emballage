@@ -11,5 +11,15 @@ export const auth = betterAuth({
      emailAndPassword: { 
     enabled: true, 
     autoSignIn: true,
-  }, 
+  },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "USER",
+        input: false, // Don't allow user to set role during signup
+      },
+    },
+  },
 });
