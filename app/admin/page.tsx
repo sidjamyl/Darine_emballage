@@ -26,32 +26,8 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
 import { Package, Users, ShoppingBag, Plus, Edit, Trash2, LogOut } from 'lucide-react';
-
-interface Order {
-  id: string;
-  orderNumber: string;
-  customerName: string;
-  customerPhone: string;
-  customerEmail?: string;
-  address: string;
-  wilaya: string;
-  municipality: string;
-  deliveryType: string;
-  shippingCost: number;
-  subtotal: number;
-  total: number;
-  status: string;
-  trackingNumber?: string;
-  createdAt: string;
-  items: Array<{
-    id: string;
-    productName: string;
-    variantName?: string;
-    quantity: number;
-    unitPrice: number;
-    total: number;
-  }>;
-}
+import { OrderCard } from './components/order-card';
+import { Order } from '@/lib/types/order.types';
 
 interface Product {
   id: string;
@@ -84,9 +60,6 @@ export default function AdminPage() {
   
   // Orders
   const [orders, setOrders] = useState<Order[]>([]);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [confirmAction, setConfirmAction] = useState<'confirm' | 'cancel'>('confirm');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
   // Products
@@ -119,7 +92,7 @@ export default function AdminPage() {
     email: '',
     name: '',
     password: '',
-    role: 'USER',
+    role: 'ADMIN',
   });
 
   useEffect(() => {
@@ -153,47 +126,37 @@ export default function AdminPage() {
   // Orders Functions
   const fetchOrders = async (status?: string) => {
     try {
-      const url = status && status !== 'ALL' ? `/api/orders?status=${status}` : '/api/orders';
+      const url = status && status !== 'ALL' ? `/api/elogistia/orders?status=${status}` : '/api/elogistia/orders';
       const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
-      setOrders(data);
+      
+      // S'assurer que data est un tableau
+      if (Array.isArray(data)) {
+        setOrders(data);
+      } else {
+        console.warn('API returned non-array data:', data);
+        setOrders([]);
+      }
     } catch (error) {
+      console.error('Error fetching orders:', error);
+      setOrders([]);
       toast.error('Erreur lors du chargement des commandes');
     }
   };
 
-  const handleConfirmOrder = (order: Order) => {
-    setSelectedOrder(order);
-    setConfirmAction('confirm');
-    setShowConfirmDialog(true);
+  const handleConfirmOrder = async (order: Order) => {
+    toast.info('Pour confirmer la commande, veuillez vous rendre sur elogistia.com');
+    window.open('https://elogistia.com/app/client/', '_blank');
   };
 
-  const handleCancelOrder = (order: Order) => {
-    setSelectedOrder(order);
-    setConfirmAction('cancel');
-    setShowConfirmDialog(true);
-  };
-
-  const executeOrderAction = async () => {
-    if (!selectedOrder) return;
-
-    try {
-      const response = await fetch(`/api/admin/orders/${selectedOrder.id}/${confirmAction}`, {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        toast.success(confirmAction === 'confirm' ? 'Commande confirmée' : 'Commande annulée');
-        fetchOrders(statusFilter);
-      } else {
-        toast.error('Erreur');
-      }
-    } catch (error) {
-      toast.error('Erreur');
-    } finally {
-      setShowConfirmDialog(false);
-      setSelectedOrder(null);
-    }
+  const handleCancelOrder = async (order: Order) => {
+    toast.info('Pour annuler la commande, veuillez vous rendre sur elogistia.com');
+    window.open('https://elogistia.com/app/client/', '_blank');
   };
 
   // Products Functions
@@ -426,17 +389,21 @@ export default function AdminPage() {
       const response = await fetch('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userForm),
+        body: JSON.stringify({
+          email: userForm.email,
+          password: userForm.password,
+          name: userForm.name,
+        }),
       });
 
       if (response.ok) {
-        toast.success('Utilisateur créé');
+        toast.success('Administrateur créé');
         fetchUsers();
         setShowUserDialog(false);
-        setUserForm({ email: '', name: '', password: '', role: 'USER' });
+        setUserForm({ email: '', name: '', password: '', role: 'ADMIN' });
       } else {
         const error = await response.json();
-        toast.error(error.message || 'Erreur');
+        toast.error(error.message || error.error || 'Erreur lors de la création');
       }
     } catch (error) {
       toast.error('Erreur');
@@ -484,39 +451,39 @@ export default function AdminPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 mb-6 border-b">
+      <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-6 md:border-b">
         <button
           onClick={() => setActiveTab('orders')}
-          className={`pb-2 px-4 flex items-center gap-2 ${
+          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${
             activeTab === 'orders'
-              ? 'border-b-2 font-semibold'
+              ? 'md:border-b-2 font-semibold'
               : 'text-gray-600'
           }`}
-          style={activeTab === 'orders' ? { borderColor: '#F8A6B0' } : {}}
+          style={activeTab === 'orders' ? { borderColor: '#F8A6B0', backgroundColor: activeTab === 'orders' ? '#FFF5F7' : 'transparent' } : { backgroundColor: 'transparent' }}
         >
           <ShoppingBag className="h-4 w-4" />
           Commandes
         </button>
         <button
           onClick={() => setActiveTab('products')}
-          className={`pb-2 px-4 flex items-center gap-2 ${
+          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${
             activeTab === 'products'
-              ? 'border-b-2 font-semibold'
+              ? 'md:border-b-2 font-semibold'
               : 'text-gray-600'
           }`}
-          style={activeTab === 'products' ? { borderColor: '#F8A6B0' } : {}}
+          style={activeTab === 'products' ? { borderColor: '#F8A6B0', backgroundColor: activeTab === 'products' ? '#FFF5F7' : 'transparent' } : { backgroundColor: 'transparent' }}
         >
           <Package className="h-4 w-4" />
           Produits
         </button>
         <button
           onClick={() => setActiveTab('users')}
-          className={`pb-2 px-4 flex items-center gap-2 ${
+          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${
             activeTab === 'users'
-              ? 'border-b-2 font-semibold'
+              ? 'md:border-b-2 font-semibold'
               : 'text-gray-600'
           }`}
-          style={activeTab === 'users' ? { borderColor: '#F8A6B0' } : {}}
+          style={activeTab === 'users' ? { borderColor: '#F8A6B0', backgroundColor: activeTab === 'users' ? '#FFF5F7' : 'transparent' } : { backgroundColor: 'transparent' }}
         >
           <Users className="h-4 w-4" />
           Utilisateurs
@@ -549,7 +516,7 @@ export default function AdminPage() {
           </div>
 
           <div className="space-y-4">
-            {orders.length === 0 ? (
+            {!Array.isArray(orders) || orders.length === 0 ? (
               <Card>
                 <CardContent className="p-8 text-center text-gray-500">
                   Aucune commande
@@ -557,99 +524,12 @@ export default function AdminPage() {
               </Card>
             ) : (
               orders.map((order) => (
-                <Card key={order.id}>
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-lg">{order.orderNumber}</CardTitle>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {new Date(order.createdAt).toLocaleDateString('fr-FR')}
-                        </p>
-                      </div>
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                          order.status === 'PENDING'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : order.status === 'CONFIRMED'
-                            ? 'bg-green-100 text-green-800'
-                            : order.status === 'CANCELLED'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-blue-100 text-blue-800'
-                        }`}
-                      >
-                        {order.status}
-                      </span>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid md:grid-cols-2 gap-4 mb-4">
-                      <div>
-                        <p className="font-semibold mb-2">Client</p>
-                        <p>{order.customerName}</p>
-                        <p>{order.customerPhone}</p>
-                        {order.customerEmail && <p>{order.customerEmail}</p>}
-                        <p className="mt-2">{order.address}</p>
-                        <p>{order.municipality}, {order.wilaya}</p>
-                      </div>
-                      <div>
-                        <p className="font-semibold mb-2">Résumé</p>
-                        <div className="space-y-1 text-sm">
-                          <div className="flex justify-between">
-                            <span>Sous-total:</span>
-                            <span>{order.subtotal.toFixed(2)} DA</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Livraison:</span>
-                            <span>{order.shippingCost.toFixed(2)} DA</span>
-                          </div>
-                          <div className="flex justify-between font-bold">
-                            <span>Total:</span>
-                            <span style={{ color: '#F8A6B0' }}>
-                              {order.total.toFixed(2)} DA
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t pt-4 mb-4">
-                      <p className="font-semibold mb-2">Produits</p>
-                      <div className="space-y-2">
-                        {order.items.map((item) => (
-                          <div key={item.id} className="flex justify-between text-sm">
-                            <span>
-                              {item.productName}
-                              {item.variantName && ` - ${item.variantName}`} x{item.quantity}
-                            </span>
-                            <span>{item.total.toFixed(2)} DA</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {order.status === 'PENDING' && (
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={() => handleConfirmOrder(order)}
-                          style={{ backgroundColor: '#F8A6B0' }}
-                        >
-                          Confirmer
-                        </Button>
-                        <Button onClick={() => handleCancelOrder(order)} variant="outline">
-                          Annuler
-                        </Button>
-                      </div>
-                    )}
-
-                    {order.trackingNumber && (
-                      <div className="mt-4 p-3 bg-gray-50 rounded">
-                        <p className="text-sm">
-                          <span className="font-semibold">Tracking:</span> {order.trackingNumber}
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  onConfirm={handleConfirmOrder}
+                  onCancel={handleCancelOrder}
+                />
               ))
             )}
           </div>
@@ -709,12 +589,12 @@ export default function AdminPage() {
           <div className="mb-6">
             <Button onClick={() => setShowUserDialog(true)} style={{ backgroundColor: '#F8A6B0' }}>
               <Plus className="h-4 w-4 mr-2" />
-              Ajouter un utilisateur
+              Ajouter un administrateur
             </Button>
           </div>
 
           <div className="space-y-4">
-            {users.map((user) => (
+            {Array.isArray(users) && users.length > 0 ? users.map((user) => (
               <Card key={user.id}>
                 <CardContent className="p-4">
                   <div className="flex justify-between items-center">
@@ -741,38 +621,16 @@ export default function AdminPage() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            )) : (
+              <Card>
+                <CardContent className="p-8 text-center text-gray-500">
+                  Aucun utilisateur
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       )}
-
-      {/* Order Confirmation Dialog */}
-      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {confirmAction === 'confirm' ? 'Confirmer la commande' : 'Annuler la commande'}
-            </DialogTitle>
-            <DialogDescription>
-              Êtes-vous sûr de vouloir {confirmAction === 'confirm' ? 'confirmer' : 'annuler'} cette commande ?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
-              Non
-            </Button>
-            <Button
-              onClick={executeOrderAction}
-              style={{
-                backgroundColor: confirmAction === 'confirm' ? '#F8A6B0' : undefined,
-              }}
-              variant={confirmAction === 'cancel' ? 'destructive' : 'default'}
-            >
-              Oui
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Product Dialog */}
       <Dialog open={showProductDialog} onOpenChange={setShowProductDialog}>
@@ -1064,7 +922,7 @@ export default function AdminPage() {
       <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Ajouter un utilisateur</DialogTitle>
+            <DialogTitle>Ajouter un administrateur</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
@@ -1092,21 +950,6 @@ export default function AdminPage() {
                 onChange={(e) => setUserForm({ ...userForm, password: e.target.value })}
                 className="mt-2"
               />
-            </div>
-            <div>
-              <Label>Rôle</Label>
-              <Select
-                value={userForm.role}
-                onValueChange={(value) => setUserForm({ ...userForm, role: value })}
-              >
-                <SelectTrigger className="mt-2">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="USER">Utilisateur</SelectItem>
-                  <SelectItem value="ADMIN">Administrateur</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
           </div>
           <DialogFooter>

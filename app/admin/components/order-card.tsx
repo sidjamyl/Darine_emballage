@@ -89,17 +89,32 @@ export function OrderCard({ order, onConfirm, onCancel }: OrderCardProps) {
         </div>
 
         {order.status === 'PENDING' && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-4">
             <Button
               onClick={() => onConfirm(order)}
               style={{ backgroundColor: '#F8A6B0' }}
+              className="flex-1"
             >
-              Confirmer
+              Confirmer sur elogistia
             </Button>
-            <Button onClick={() => onCancel(order)} variant="outline">
-              Annuler
+            <Button 
+              onClick={() => onCancel(order)} 
+              variant="outline"
+              className="flex-1"
+            >
+              Annuler sur elogistia
             </Button>
           </div>
+        )}
+
+        {order.status !== 'PENDING' && (
+          <Button
+            onClick={() => window.open('https://elogistia.com/app/client/', '_blank')}
+            style={{ backgroundColor: '#F8A6B0' }}
+            className="w-full mt-4"
+          >
+            Voir sur elogistia
+          </Button>
         )}
 
         {order.trackingNumber && (
