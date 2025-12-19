@@ -20,6 +20,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  orders        Order[]
 
   @@map("user")
 }
@@ -110,6 +111,8 @@ model ProductVariant {
 model Order {
   id              String      @id @default(cuid())
   orderNumber     String      @unique
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
   customerName    String
   customerPhone   String
   customerEmail   String?
@@ -130,6 +133,7 @@ model Order {
   updatedAt       DateTime    @updatedAt
   items           OrderItem[]
 
+  @@index([userId])
   @@map("order")
 }
 

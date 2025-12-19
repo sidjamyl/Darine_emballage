@@ -13,6 +13,7 @@ export const translations = {
       cart: 'Panier',
       contact: 'Contact',
       admin: 'Administration',
+      myOrders: 'Mes Commandes',
     },
     // Hero Section
     hero: {
@@ -134,6 +135,7 @@ export const translations = {
       cart: 'السلة',
       contact: 'اتصل بنا',
       admin: 'الإدارة',
+      myOrders: 'طلباتي',
     },
     // Hero Section
     hero: {

@@ -1,35 +1,58 @@
 import { NextResponse } from 'next/server';
 import { getUser } from '@/lib/auth-server';
+import { prisma } from '@/lib/prisma';
 import { ELOGISTIA_API_KEY, ELOGISTIA_BASE_URL } from '@/lib/services/elogistia/config';
 
 /**
- * GET all orders from Elogistia API (FIXED VERSION)
- * Admin only endpoint
- * This version properly handles the { body: [...] } response structure
+ * GET user's orders from Elogistia in real-time
+ * Requires authentication
  */
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const user = await getUser();
     
-    if (!user || user.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
     }
 
-    // Get filter parameter
-    const { searchParams } = new URL(request.url);
-    const status = searchParams.get('status');
+    // Get user's profile to find their phone number
+    const userAccount = await prisma.account.findFirst({
+      where: {
+        userId: user.id,
+      },
+    });
 
-    // Build Elogistia API URL (using 'key' parameter as per API docs)
+    // Get user's previous orders to know their phone/email
+    const userOrders = await prisma.order.findMany({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        customerPhone: true,
+        customerEmail: true,
+      },
+      take: 1,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    // If no orders found in DB, return empty array
+    if (userOrders.length === 0) {
+      return NextResponse.json([]);
+    }
+
+    const userPhone = userOrders[0].customerPhone;
+    const userEmail = userOrders[0].customerEmail;
+
+    // Fetch all orders from Elogistia
     const params = new URLSearchParams({
       key: ELOGISTIA_API_KEY,
     });
 
-    // Note: eLogistia API doesn't support status filtering via query params
-    // We'll filter on the client side after receiving all orders
-
     const url = `${ELOGISTIA_BASE_URL}/getOrders/?${params.toString()}`;
     
-    console.log('Fetching orders from Elogistia (FIXED):', url.replace(ELOGISTIA_API_KEY, 'API_KEY_HIDDEN'));
+    console.log('Fetching orders from Elogistia for user:', user.id);
     
     const response = await fetch(url, {
       method: 'GET',
@@ -38,42 +61,37 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log('Elogistia response status:', response.status);
-
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Elogistia API error:', response.status, errorText);
+      console.error('Elogistia API error:', response.status);
       return NextResponse.json([]);
     }
 
     const data = await response.json();
     
-    console.log('Elogistia API full response:', JSON.stringify(data, null, 2));
-    
-    // FIXED: Properly extract orders from the response
+    // FIXED: Properly extract orders from the response (same as orders-fixed)
     let ordersArray = [];
     
-    // Check if response has a "body" property (the actual orders array)
     if (data && data.body && Array.isArray(data.body)) {
-      console.log('Found orders in data.body, count:', data.body.length);
       ordersArray = data.body;
-    } 
-    // Fallback to other possible structures
-    else if (Array.isArray(data)) {
-      console.log('Data is already an array, count:', data.length);
+    } else if (Array.isArray(data)) {
       ordersArray = data;
-    } 
-    else if (data && data.orders && Array.isArray(data.orders)) {
-      console.log('Found orders in data.orders');
+    } else if (data && data.orders && Array.isArray(data.orders)) {
       ordersArray = data.orders;
-    }
-    else {
-      console.warn('Could not find orders array in response');
+    } else {
       ordersArray = [];
     }
     
+    // Filter orders by user's phone or email
+    const userOrdersFromElogistia = ordersArray.filter((order: any) => {
+      const orderPhone = order['Téléphone'];
+      const orderEmail = order['E-mail'];
+      return orderPhone === userPhone || (userEmail && orderEmail === userEmail);
+    });
+
+    console.log(`Found ${userOrdersFromElogistia.length} orders for user`);
+
     // Transform Elogistia data to match our format
-    const transformedOrders = ordersArray.map((order: any, index: number) => {
+    const transformedOrders = userOrdersFromElogistia.map((order: any, index: number) => {
       // Normaliser le statut pour correspondre à OrderStatus
       let orderStatus: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'DELIVERED' = 'PENDING';
       const rawStatus = order['Status']?.toUpperCase();
@@ -108,6 +126,7 @@ export async function GET(request: Request) {
         status: orderStatus,
         trackingNumber: order['Tracking'] || '',
         createdAt: new Date().toISOString(),
+        notes: order['Remarque'] || '',
         items: order['Produit'] ? [{
           id: `item-${index}-0`,
           productName: (order['Produit'] || '').trim(),
@@ -118,28 +137,19 @@ export async function GET(request: Request) {
       };
     });
 
-    // Filter by status if provided
-    let filteredOrders = transformedOrders;
-    if (status && status !== 'ALL') {
-      filteredOrders = transformedOrders.filter((order: any) => order.status === status);
-      console.log(`Filtered from ${transformedOrders.length} to ${filteredOrders.length} orders with status ${status}`);
-    }
-
     // Sort by CommandeID (descending) - higher IDs are more recent
-    const sortedOrders = filteredOrders.sort((a: any, b: any) => {
+    const sortedOrders = transformedOrders.sort((a: any, b: any) => {
       const idA = parseInt(a.orderNumber) || 0;
       const idB = parseInt(b.orderNumber) || 0;
       return idB - idA; // Descending order (most recent first)
     });
 
-    console.log(`Returning ${sortedOrders.length} transformed orders`);
-    if (sortedOrders.length > 0) {
-      console.log('First order sample:', JSON.stringify(sortedOrders[0], null, 2));
-    }
-
     return NextResponse.json(sortedOrders);
   } catch (error) {
-    console.error('Error fetching Elogistia orders:', error);
-    return NextResponse.json([]);
+    console.error('Error fetching user orders:', error);
+    return NextResponse.json(
+      { error: 'Erreur lors de la récupération des commandes' },
+      { status: 500 }
+    );
   }
 }

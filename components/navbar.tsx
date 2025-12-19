@@ -4,15 +4,30 @@ import { useLanguage } from '@/lib/language-context';
 import Link from 'next/link';
 import Image from 'next/image';
 import { LanguageSwitcher } from './language-switcher';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, Package } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { authClient } from '@/lib/auth-client';
 
 export function Navbar() {
   const { t } = useLanguage();
   const { items } = useCart();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const session = await authClient.getSession();
+      setIsAuthenticated(!!session);
+    } catch (error) {
+      setIsAuthenticated(false);
+    }
+  };
 
   return (
     <nav className="border-b" style={{ backgroundColor: 'white' }}>
@@ -44,6 +59,12 @@ export function Navbar() {
             <Link href="/contact" className="hover:text-[#F8A6B0] transition-colors">
               {t.nav.contact}
             </Link>
+            {isAuthenticated && (
+              <Link href="/mes-commandes" className="hover:text-[#F8A6B0] transition-colors flex items-center gap-1">
+                <Package className="h-4 w-4" />
+                {t.nav.myOrders || 'Mes Commandes'}
+              </Link>
+            )}
             <Link href="/cart" className="relative hover:text-[#F8A6B0] transition-colors">
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
@@ -116,6 +137,16 @@ export function Navbar() {
               >
                 {t.nav.contact}
               </Link>
+              {isAuthenticated && (
+                <Link 
+                  href="/mes-commandes" 
+                  className="hover:text-[#F8A6B0] transition-colors py-2 flex items-center gap-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Package className="h-4 w-4" />
+                  {t.nav.myOrders || 'Mes Commandes'}
+                </Link>
+              )}
             </div>
           </div>
         )}

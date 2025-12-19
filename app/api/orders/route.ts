@@ -1,11 +1,22 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { createElogistiaOrder } from '@/lib/elogistia';
+import { getUser } from '@/lib/auth-server';
 
 const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
+    // Check if user is authenticated (optional but recommended)
+    let userId: string | undefined;
+    try {
+      const user = await getUser();
+      userId = user?.id;
+    } catch (error) {
+      // User not authenticated, continue without userId
+      console.log('Order created without user authentication');
+    }
+
     const body = await request.json();
     const {
       customerName,
@@ -30,6 +41,7 @@ export async function POST(request: Request) {
     const order = await prisma.order.create({
       data: {
         orderNumber,
+        userId, // Associate with user if authenticated
         customerName,
         customerPhone,
         customerEmail,
