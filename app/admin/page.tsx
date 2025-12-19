@@ -126,18 +126,44 @@ export default function AdminPage() {
   // Orders Functions
   const fetchOrders = async (status?: string) => {
     try {
-      const url = status && status !== 'ALL' ? `/api/elogistia/orders?status=${status}` : '/api/elogistia/orders';
+      const url = status && status !== 'ALL' ? `/api/elogistia/orders-fixed?status=${status}` : '/api/elogistia/orders-fixed';
       const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      const data = await response.json();
+      let data = await response.json();
       
-      // S'assurer que data est un tableau
+      console.log('====== FETCH ORDERS DEBUG ======');
+      console.log('1. Raw data received:', data);
+      console.log('2. Is array?', Array.isArray(data));
+      
+      // Fix: Si data est un tableau dont le premier élément est un tableau (à cause de Object.values dans l'API)
+      // alors utiliser seulement le premier élément
+      if (Array.isArray(data) && data.length > 0 && Array.isArray(data[0])) {
+        console.log('3. First element is array, extracting it');
+        data = data[0];
+      }
+      
+      // S'assurer que data est un tableau valide avec des commandes réelles
       if (Array.isArray(data)) {
-        setOrders(data);
+        // Filtrer les objets invalides (ceux sans customerName, customerPhone, etc.)
+        const validOrders = data.filter(order => {
+          // Une commande valide doit avoir au moins un orderNumber ou un customerPhone
+          const hasValidData = order.orderNumber || order.customerPhone || order.trackingNumber;
+          if (!hasValidData) {
+            console.log('Filtering out invalid order:', order);
+          }
+          return hasValidData;
+        });
+        
+        console.log('4. Valid orders count:', validOrders.length);
+        if (validOrders.length > 0) {
+          console.log('5. First valid order:', validOrders[0]);
+        }
+        console.log('================================');
+        setOrders(validOrders);
       } else {
         console.warn('API returned non-array data:', data);
         setOrders([]);

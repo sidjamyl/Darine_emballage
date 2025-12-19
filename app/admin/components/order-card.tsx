@@ -17,12 +17,15 @@ interface OrderCardProps {
 }
 
 export function OrderCard({ order, onConfirm, onCancel }: OrderCardProps) {
+  // Debug: Afficher ce que reçoit le composant
+  console.log('OrderCard received:', order);
+  
   return (
     <Card>
       <CardHeader>
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-lg">{order.orderNumber}</CardTitle>
+            <CardTitle className="text-lg">{order.orderNumber || 'N/A'}</CardTitle>
             <p className="text-sm text-gray-600 mt-1">
               {new Date(order.createdAt).toLocaleDateString('fr-FR')}
             </p>
