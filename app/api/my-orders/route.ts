@@ -25,7 +25,7 @@ export async function GET() {
     // Get user's previous orders to know their phone/email
     const userOrders = await prisma.order.findMany({
       where: {
-        userId: user.id,
+       
       },
       select: {
         customerPhone: true,

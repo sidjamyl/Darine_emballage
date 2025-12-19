@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { createElogistiaOrder } from '@/lib/elogistia';
 import { getUser } from '@/lib/auth-server';
+import { sendOrderNotification } from '@/lib/utils/email';
 
 const prisma = new PrismaClient();
 
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
     const order = await prisma.order.create({
       data: {
         orderNumber,
-        userId, // Associate with user if authenticated
+       
         customerName,
         customerPhone,
         customerEmail,
@@ -101,6 +102,28 @@ export async function POST(request: Request) {
         },
       });
       
+      // Send email notification to admin
+      try {
+        await sendOrderNotification({
+          orderNumber,
+          customerName,
+          customerPhone,
+          customerEmail,
+          address,
+          wilaya,
+          municipality,
+          subtotal,
+          shippingCost,
+          total,
+          items,
+          trackingNumber: elogistiaResult.trackingNumber,
+        });
+        console.log('Order notification email sent successfully');
+      } catch (emailError) {
+        console.error('Failed to send email notification:', emailError);
+        // Don't fail the order creation if email fails
+      }
+      
       return NextResponse.json({
         ...order,
         trackingNumber: elogistiaResult.trackingNumber,
@@ -109,6 +132,27 @@ export async function POST(request: Request) {
     } else {
       // If Elogistia fails, keep order as PENDING for manual processing
       console.error('Elogistia order creation failed:', elogistiaResult.error);
+      
+      // Send email notification to admin even if Elogistia fails
+      try {
+        await sendOrderNotification({
+          orderNumber,
+          customerName,
+          customerPhone,
+          customerEmail,
+          address,
+          wilaya,
+          municipality,
+          subtotal,
+          shippingCost,
+          total,
+          items,
+        });
+        console.log('Order notification email sent successfully (Elogistia failed)');
+      } catch (emailError) {
+        console.error('Failed to send email notification:', emailError);
+      }
+      
       return NextResponse.json({
         ...order,
         warning: 'Order created locally but failed to sync with Elogistia',
