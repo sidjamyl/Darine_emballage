@@ -24,10 +24,8 @@ export async function GET(request: Request) {
       key: ELOGISTIA_API_KEY,
     });
 
-    // Add status filter if provided
-    if (status && status !== 'ALL') {
-      params.append('status', status);
-    }
+    // Note: eLogistia API doesn't support status filtering via query params
+    // We'll filter on the client side after receiving all orders
 
     const url = `${ELOGISTIA_BASE_URL}/getOrders/?${params.toString()}`;
     
@@ -75,23 +73,23 @@ export async function GET(request: Request) {
     }
     
     // Transform Elogistia data to match our format
-    const orders = ordersArray.map((order: any, index: number) => {
+    const transformedOrders = ordersArray.map((order: any, index: number) => {
       // Normaliser le statut pour correspondre à OrderStatus
-      let status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'DELIVERED' = 'PENDING';
-      const orderStatus = order['Status']?.toUpperCase();
+      let orderStatus: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'DELIVERED' = 'PENDING';
+      const rawStatus = order['Status']?.toUpperCase();
       
-      if (orderStatus === 'CONFIRMED' || orderStatus === 'CONFIRMÉE') {
-        status = 'CONFIRMED';
-      } else if (orderStatus === 'CANCELLED' || orderStatus === 'ANNULÉE') {
-        status = 'CANCELLED';
-      } else if (orderStatus === 'DELIVERED' || orderStatus === 'LIVRÉE') {
-        status = 'DELIVERED';
-      } else if (orderStatus?.includes('LIVR') || orderStatus?.includes('RÉGLÉE')) {
-        status = 'DELIVERED';
-      } else if (orderStatus === 'RETOUR' || orderStatus?.includes('RETOUR')) {
-        status = 'CANCELLED';
-      } else if (orderStatus === 'BROUILLON') {
-        status = 'PENDING';
+      if (rawStatus === 'CONFIRMED' || rawStatus === 'CONFIRMÉE') {
+        orderStatus = 'CONFIRMED';
+      } else if (rawStatus === 'CANCELLED' || rawStatus === 'ANNULÉE') {
+        orderStatus = 'CANCELLED';
+      } else if (rawStatus === 'DELIVERED' || rawStatus === 'LIVRÉE') {
+        orderStatus = 'DELIVERED';
+      } else if (rawStatus?.includes('LIVR') || rawStatus?.includes('RÉGLÉE')) {
+        orderStatus = 'DELIVERED';
+      } else if (rawStatus === 'RETOUR' || rawStatus?.includes('RETOUR')) {
+        orderStatus = 'CANCELLED';
+      } else if (rawStatus === 'BROUILLON') {
+        orderStatus = 'PENDING';
       }
       
       return {
@@ -107,7 +105,7 @@ export async function GET(request: Request) {
         shippingCost: parseFloat(order['Frais de livraison'] || order['Frais ELogistia'] || 0),
         subtotal: parseFloat(order['Total Recouvrement'] || 0) - parseFloat(order['Frais de livraison'] || order['Frais ELogistia'] || 0),
         total: parseFloat(order['Total Recouvrement'] || 0),
-        status: status,
+        status: orderStatus,
         trackingNumber: order['Tracking'] || '',
         createdAt: new Date().toISOString(),
         items: order['Produit'] ? [{
@@ -120,12 +118,26 @@ export async function GET(request: Request) {
       };
     });
 
-    console.log(`Returning ${orders.length} transformed orders`);
-    if (orders.length > 0) {
-      console.log('First order sample:', JSON.stringify(orders[0], null, 2));
+    // Filter by status if provided
+    let filteredOrders = transformedOrders;
+    if (status && status !== 'ALL') {
+      filteredOrders = transformedOrders.filter(order => order.status === status);
+      console.log(`Filtered from ${transformedOrders.length} to ${filteredOrders.length} orders with status ${status}`);
     }
 
-    return NextResponse.json(orders);
+    // Sort by CommandeID (descending) - higher IDs are more recent
+    const sortedOrders = filteredOrders.sort((a, b) => {
+      const idA = parseInt(a.orderNumber) || 0;
+      const idB = parseInt(b.orderNumber) || 0;
+      return idB - idA; // Descending order (most recent first)
+    });
+
+    console.log(`Returning ${sortedOrders.length} transformed orders`);
+    if (sortedOrders.length > 0) {
+      console.log('First order sample:', JSON.stringify(sortedOrders[0], null, 2));
+    }
+
+    return NextResponse.json(sortedOrders);
   } catch (error) {
     console.error('Error fetching Elogistia orders:', error);
     return NextResponse.json([]);

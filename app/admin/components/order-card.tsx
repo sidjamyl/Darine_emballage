@@ -12,11 +12,9 @@ import { Order } from '@/lib/types';
 
 interface OrderCardProps {
   order: Order;
-  onConfirm: (order: Order) => void;
-  onCancel: (order: Order) => void;
 }
 
-export function OrderCard({ order, onConfirm, onCancel }: OrderCardProps) {
+export function OrderCard({ order }: OrderCardProps) {
   // Debug: Afficher ce que reçoit le composant
   console.log('OrderCard received:', order);
   
@@ -91,34 +89,13 @@ export function OrderCard({ order, onConfirm, onCancel }: OrderCardProps) {
           </div>
         </div>
 
-        {order.status === 'PENDING' && (
-          <div className="flex gap-2 mt-4">
-            <Button
-              onClick={() => onConfirm(order)}
-              style={{ backgroundColor: '#F8A6B0' }}
-              className="flex-1"
-            >
-              Confirmer sur elogistia
-            </Button>
-            <Button 
-              onClick={() => onCancel(order)} 
-              variant="outline"
-              className="flex-1"
-            >
-              Annuler sur elogistia
-            </Button>
-          </div>
-        )}
-
-        {order.status !== 'PENDING' && (
-          <Button
-            onClick={() => window.open('https://elogistia.com/app/client/', '_blank')}
-            style={{ backgroundColor: '#F8A6B0' }}
-            className="w-full mt-4"
-          >
-            Voir sur elogistia
-          </Button>
-        )}
+        <Button
+          onClick={() => window.open('https://elogistia.com/app/client/', '_blank')}
+          style={{ backgroundColor: '#F8A6B0' }}
+          className="w-full mt-4"
+        >
+          Voir la commande sur elogistia
+        </Button>
 
         {order.trackingNumber && (
           <div className="mt-4 p-3 bg-gray-50 rounded">

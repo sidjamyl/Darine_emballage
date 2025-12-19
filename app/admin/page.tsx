@@ -175,15 +175,7 @@ export default function AdminPage() {
     }
   };
 
-  const handleConfirmOrder = async (order: Order) => {
-    toast.info('Pour confirmer la commande, veuillez vous rendre sur elogistia.com');
-    window.open('https://elogistia.com/app/client/', '_blank');
-  };
-
-  const handleCancelOrder = async (order: Order) => {
-    toast.info('Pour annuler la commande, veuillez vous rendre sur elogistia.com');
-    window.open('https://elogistia.com/app/client/', '_blank');
-  };
+  // Handlers removed - OrderCard now handles the action directly
 
   // Products Functions
   const fetchProducts = async () => {
@@ -553,8 +545,6 @@ export default function AdminPage() {
                 <OrderCard
                   key={order.id}
                   order={order}
-                  onConfirm={handleConfirmOrder}
-                  onCancel={handleCancelOrder}
                 />
               ))
             )}
