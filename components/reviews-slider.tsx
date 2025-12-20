@@ -54,9 +54,9 @@ export function ReviewsSlider({ reviews, autoPlayInterval = 6000 }: ReviewsSlide
           {t.reviews.title}
         </h2>
 
-        <div className="relative max-w-4xl mx-auto px-4 md:px-0">
+        <div className="relative max-w-4xl mx-auto">
           <Card className="border-none shadow-lg">
-            <CardContent className="p-4 md:p-8">
+            <CardContent className="p-8">
               <div className="flex flex-col items-center text-center">
                 {/* Rating */}
                 {review.rating && (
@@ -87,19 +87,19 @@ export function ReviewsSlider({ reviews, autoPlayInterval = 6000 }: ReviewsSlide
             </CardContent>
           </Card>
 
-          {/* Navigation Arrows - Hidden on mobile */}
+          {/* Navigation Arrows */}
           {reviews.length > 1 && (
             <>
               <button
                 onClick={prevReview}
-                className="hidden md:block absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg"
                 aria-label="Previous review"
               >
                 <ChevronLeft className="h-6 w-6" style={{ color: '#383738' }} />
               </button>
               <button
                 onClick={nextReview}
-                className="hidden md:block absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg"
                 aria-label="Next review"
               >
                 <ChevronRight className="h-6 w-6" style={{ color: '#383738' }} />

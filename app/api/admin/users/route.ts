@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
+import { hash } from 'bcrypt';
 import { getUser } from '@/lib/auth-server';
-import { auth } from '@/lib/auth';
 
 const prisma = new PrismaClient();
 
@@ -37,13 +37,13 @@ export async function GET(request: Request) {
 // POST create new user (admin only)
 export async function POST(request: Request) {
   try {
-    const currentUser = await getUser();
+    const users = await getUser();
     
-    if (!currentUser || currentUser.role !== 'ADMIN') {
+    if (!users ) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { email, name, password } = await request.json();
+    const { email, name, password, role } = await request.json();
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
@@ -54,19 +54,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'User already exists' }, { status: 400 });
     }
 
-    // Create user using Better Auth (same as seed-admin.ts)
-    await auth.api.signUpEmail({
-      body: {
+    // Hash password
+    const hashedPassword = await hash(password, 10);
+
+    // Create user
+    const user = await prisma.user.create({
+      data: {
+        id: `user-${Date.now()}`,
         email,
-        password,
         name,
+        role: role || 'USER',
+        emailVerified: true,
       },
     });
 
-    // Update user role to ADMIN
-    const user = await prisma.user.update({
-      where: { email },
-      data: { role: 'ADMIN', emailVerified: true },
+    // Create account with password
+    await prisma.account.create({
+      data: {
+        id: `account-${user.id}`,
+        accountId: `account-${user.id}`,
+        providerId: 'credential',
+        userId: user.id,
+        password: hashedPassword,
+      },
     });
 
     return NextResponse.json({ 
@@ -110,44 +120,5 @@ export async function DELETE(request: Request) {
   } catch (error) {
     console.error('Error deleting user:', error);
     return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 });
-  }
-}
-
-// PATCH update user role (admin only)
-export async function PATCH(request: Request) {
-  try {
-    const currentUser = await getUser();
-    
-    if (!currentUser || currentUser.role !== 'ADMIN') {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-
-    if (!id) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 });
-    }
-
-    const { role } = await request.json();
-
-    if (!role || !['USER', 'ADMIN'].includes(role)) {
-      return NextResponse.json({ error: 'Valid role required' }, { status: 400 });
-    }
-
-    const user = await prisma.user.update({
-      where: { id },
-      data: { role },
-    });
-
-    return NextResponse.json({ 
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-    });
-  } catch (error) {
-    console.error('Error updating user role:', error);
-    return NextResponse.json({ error: 'Failed to update user role' }, { status: 500 });
   }
 }

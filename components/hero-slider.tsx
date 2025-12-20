@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { useLanguage } from '@/lib/language-context';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -71,12 +70,10 @@ export function HeroSlider({ slides, autoPlayInterval = 100000 }: HeroSliderProp
               index === currentSlide ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            <Image
+            <img
               src={s.image}
               alt={locale === 'ar' ? s.titleAr : s.titleFr}
-              fill
-              className="object-cover"
-              priority={index === 0}
+              className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black/40" />
           </div>

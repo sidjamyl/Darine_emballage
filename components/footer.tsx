@@ -15,34 +15,34 @@ export function Footer() {
             <h3 className="text-xl font-bold mb-4" style={{ color: '#383738' }}>
               Darine Emballage
             </h3>
-            <p className="text-sm" style={{ color: '#383738' }} suppressHydrationWarning>
+            <p className="text-sm" style={{ color: '#383738' }}>
               {t.about.description}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4" style={{ color: '#383738' }} suppressHydrationWarning>
+            <h4 className="font-semibold mb-4" style={{ color: '#383738' }}>
               {t.footer.quickLinks}
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/" className="hover:text-[#F8A6B0] transition-colors" suppressHydrationWarning>
+                <Link href="/" className="hover:text-[#F8A6B0] transition-colors">
                   {t.nav.home}
                 </Link>
               </li>
               <li>
-                <Link href="/catalog" className="hover:text-[#F8A6B0] transition-colors" suppressHydrationWarning>
+                <Link href="/catalog" className="hover:text-[#F8A6B0] transition-colors">
                   {t.nav.catalog}
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-[#F8A6B0] transition-colors" suppressHydrationWarning>
+                <Link href="/about" className="hover:text-[#F8A6B0] transition-colors">
                   {t.nav.about}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-[#F8A6B0] transition-colors" suppressHydrationWarning>
+                <Link href="/contact" className="hover:text-[#F8A6B0] transition-colors">
                   {t.nav.contact}
                 </Link>
               </li>
@@ -51,18 +51,18 @@ export function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-semibold mb-4" style={{ color: '#383738' }} suppressHydrationWarning>
+            <h4 className="font-semibold mb-4" style={{ color: '#383738' }}>
               {t.nav.contact}
             </h4>
             <ul className="space-y-2 text-sm" style={{ color: '#383738' }}>
-              <li suppressHydrationWarning>{t.contact.phone}: +213 540153721</li>
-              <li suppressHydrationWarning>{t.contact.address}: El-Biar Alger, Algérie</li>
+              <li>{t.contact.phone}: +213 540153721</li>
+              <li>{t.contact.address}: El-Biar Alger, Algérie</li>
             </ul>
           </div>
         </div>
 
         <div className="border-t mt-8 pt-4 text-center text-sm" style={{ color: '#383738' }}>
-          <p suppressHydrationWarning>© {new Date().getFullYear()} Darine Emballage. {t.footer.rights}.</p>
+          <p>© {new Date().getFullYear()} Darine Emballage. {t.footer.rights}.</p>
         </div>
       </div>
     </footer>
