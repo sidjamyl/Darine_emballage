@@ -49,12 +49,9 @@ export default function AboutPage() {
               <div className="text-4xl font-bold text-white mb-2">500+</div>
               <div className="text-white">{locale === 'ar' ? 'منتج' : 'Produits'}</div>
             </div>
-            <div className="text-center p-6 rounded-lg" style={{ backgroundColor: '#F1E5B4' }}>
-              <div className="text-4xl font-bold mb-2" style={{ color: '#383738' }}>1000+</div>
-              <div style={{ color: '#383738' }}>{locale === 'ar' ? 'عميل راضٍ' : 'Clients satisfaits'}</div>
-            </div>
+           
             <div className="text-center p-6 rounded-lg" style={{ backgroundColor: '#F8A6B0' }}>
-              <div className="text-4xl font-bold text-white mb-2">48</div>
+              <div className="text-4xl font-bold text-white mb-2">58</div>
               <div className="text-white">{locale === 'ar' ? 'ولاية مُغطاة' : 'Wilayas couvertes'}</div>
             </div>
           </div>
