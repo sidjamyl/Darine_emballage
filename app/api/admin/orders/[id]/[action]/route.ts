@@ -67,7 +67,7 @@ export async function POST(
         municipality: order.municipality,
         deliveryType: order.deliveryType.toUpperCase() as 'HOME' | 'STOPDESK',
         shippingCost: order.shippingCost,
-        products: order.items.map((item) => ({
+        products: order.items.map((item : any) => ({
           name: item.productName,
           price: item.unitPrice,
         })),
