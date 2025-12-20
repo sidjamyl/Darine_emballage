@@ -86,11 +86,7 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-4 text-center text-sm text-gray-600">
-            <p>Compte de test:</p>
-            <p>Email: admin@darine.com</p>
-            <p>Mot de passe: admin123</p>
-          </div>
+       
         </CardContent>
       </Card>
     </div>
