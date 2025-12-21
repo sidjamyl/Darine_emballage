@@ -1,7 +1,7 @@
 export type Locale = 'fr' | 'ar';
 
 export const locales: Locale[] = ['fr', 'ar'];
-export const defaultLocale: Locale = 'fr';
+export const defaultLocale: Locale = 'ar';
 
 export const translations = {
   fr: {
@@ -38,6 +38,7 @@ export const translations = {
       selectVariant: 'Sélectionner une option',
       quantity: 'Quantité',
       price: 'Prix',
+      new: 'Nouveau !',
     },
     // Cart
     cart: {
@@ -64,7 +65,7 @@ export const translations = {
       selectMunicipality: 'Sélectionner une commune',
       deliveryType: 'Type de livraison',
       home: 'Livraison à domicile',
-      stopdesk: 'Point relais',
+      stopdesk: 'Bureau',
     },
     // Reviews
     reviews: {
@@ -160,6 +161,7 @@ export const translations = {
       selectVariant: 'اختر خيارًا',
       quantity: 'الكمية',
       price: 'السعر',
+      new: 'جديد !',
     },
     // Cart
     cart: {
@@ -186,7 +188,7 @@ export const translations = {
       selectMunicipality: 'اختر البلدية',
       deliveryType: 'نوع التوصيل',
       home: 'التوصيل للمنزل',
-      stopdesk: 'نقطة الاستلام',
+      stopdesk: 'مكتب',
     },
     // Reviews
     reviews: {

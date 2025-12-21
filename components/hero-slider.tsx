@@ -44,7 +44,7 @@ export function HeroSlider({ slides, autoPlayInterval = 100000 }: HeroSliderProp
 
   if (slides.length === 0) {
     return (
-      <div className="relative h-[60vh] bg-gradient-to-r from-[#F8A6B0] to-[#F1E5B4] flex items-center justify-center">
+      <div className="relative h-[60vh] bg-gradient-to-r from-[var(--brand-pink)] to-[#F1E5B4] flex items-center justify-center">
         <div className="text-center text-white px-4">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">{t.hero.title}</h1>
           <p className="text-xl md:text-2xl mb-8">{t.hero.subtitle}</p>
@@ -67,9 +67,8 @@ export function HeroSlider({ slides, autoPlayInterval = 100000 }: HeroSliderProp
         {slides.map((s, index) => (
           <div
             key={s.id}
-            className={`absolute inset-0 transition-opacity duration-500 ${
-              index === currentSlide ? 'opacity-100' : 'opacity-0'
-            }`}
+            className={`absolute inset-0 transition-opacity duration-500 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
           >
             <Image
               src={s.image}
@@ -125,11 +124,10 @@ export function HeroSlider({ slides, autoPlayInterval = 100000 }: HeroSliderProp
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`h-3 w-3 rounded-full transition-all ${
-                index === currentSlide
+              className={`h-3 w-3 rounded-full transition-all ${index === currentSlide
                   ? 'bg-white w-8'
                   : 'bg-white/50 hover:bg-white/75'
-              }`}
+                }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}

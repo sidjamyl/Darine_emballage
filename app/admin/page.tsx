@@ -25,9 +25,10 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
-import { Package, Users, ShoppingBag, Plus, Edit, Trash2, LogOut } from 'lucide-react';
+import { Package, Users, ShoppingBag, Plus, Edit, Trash2, LogOut, Settings, Check, AlertCircle } from 'lucide-react';
 import { OrderCard } from './components/order-card';
 import { Order } from '@/lib/types/order.types';
+import { getSiteSettings, updateSiteSettings } from '@/lib/actions';
 
 interface Product {
   id: string;
@@ -40,6 +41,9 @@ interface Product {
   image: string;
   hasVariants: boolean;
   isPopular: boolean;
+  isPinned: boolean;
+  ribbonText?: string;
+  newUntil?: string; // ISO date string
 }
 
 interface User {
@@ -50,14 +54,14 @@ interface User {
   createdAt: string;
 }
 
-type Tab = 'orders' | 'products' | 'users';
+type Tab = 'orders' | 'products' | 'users' | 'settings';
 
 export default function AdminPage() {
   const { locale } = useLanguage();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>('orders');
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Orders
   const [orders, setOrders] = useState<Order[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -76,6 +80,9 @@ export default function AdminPage() {
     image: '',
     hasVariants: false,
     isPopular: false,
+    isPinned: false,
+    ribbonText: '',
+    newUntil: '',
   });
   const [variants, setVariants] = useState<Array<{
     id?: string;
@@ -84,6 +91,10 @@ export default function AdminPage() {
     priceAdjustment: number;
   }>>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
+
+  // Settings
+  const [themeColor, setThemeColor] = useState('#D63384');
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
 
   // Users
   const [users, setUsers] = useState<User[]>([]);
@@ -103,6 +114,7 @@ export default function AdminPage() {
     if (activeTab === 'orders') fetchOrders();
     if (activeTab === 'products') fetchProducts();
     if (activeTab === 'users') fetchUsers();
+    if (activeTab === 'settings') fetchSettings();
   }, [activeTab]);
 
   const checkAuth = async () => {
@@ -128,24 +140,24 @@ export default function AdminPage() {
     try {
       const url = status && status !== 'ALL' ? `/api/elogistia/orders-fixed?status=${status}` : '/api/elogistia/orders-fixed';
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       let data = await response.json();
-      
+
       console.log('====== FETCH ORDERS DEBUG ======');
       console.log('1. Raw data received:', data);
       console.log('2. Is array?', Array.isArray(data));
-      
+
       // Fix: Si data est un tableau dont le premier élément est un tableau (à cause de Object.values dans l'API)
       // alors utiliser seulement le premier élément
       if (Array.isArray(data) && data.length > 0 && Array.isArray(data[0])) {
         console.log('3. First element is array, extracting it');
         data = data[0];
       }
-      
+
       // S'assurer que data est un tableau valide avec des commandes réelles
       if (Array.isArray(data)) {
         // Filtrer les objets invalides (ceux sans customerName, customerPhone, etc.)
@@ -157,7 +169,7 @@ export default function AdminPage() {
           }
           return hasValidData;
         });
-        
+
         console.log('4. Valid orders count:', validOrders.length);
         if (validOrders.length > 0) {
           console.log('5. First valid order:', validOrders[0]);
@@ -201,8 +213,11 @@ export default function AdminPage() {
         image: product.image,
         hasVariants: product.hasVariants,
         isPopular: product.isPopular,
+        isPinned: !!product.isPinned,
+        ribbonText: product.ribbonText || '',
+        newUntil: product.newUntil ? new Date(product.newUntil).toISOString().split('T')[0] : '',
       });
-      
+
       // Charger les variantes si elles existent
       if (product.hasVariants) {
         try {
@@ -258,6 +273,9 @@ export default function AdminPage() {
         image: '',
         hasVariants: false,
         isPopular: false,
+        isPinned: false,
+        ribbonText: '',
+        newUntil: '',
       });
       setVariants([]);
     }
@@ -355,6 +373,7 @@ export default function AdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...productForm,
+          newUntil: productForm.newUntil ? new Date(productForm.newUntil) : null,
           variants: productForm.hasVariants ? variants : [],
         }),
       });
@@ -447,6 +466,36 @@ export default function AdminPage() {
     }
   };
 
+  // Settings Functions
+  const fetchSettings = async () => {
+    try {
+      const settings = await getSiteSettings();
+      if (settings && settings.themeColor) {
+        setThemeColor(settings.themeColor);
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  };
+
+  const saveSettings = async () => {
+    setIsSavingSettings(true);
+    try {
+      const result = await updateSiteSettings({ themeColor });
+      if (result.success) {
+        toast.success('Paramètres enregistrés');
+        // Force reload to apply theme changes immediately if layout doesn't re-render
+        // router.refresh(); 
+      } else {
+        toast.error('Erreur lors de l\'enregistrement');
+      }
+    } catch (error) {
+      toast.error('Erreur');
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -472,11 +521,10 @@ export default function AdminPage() {
       <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-6 md:border-b">
         <button
           onClick={() => setActiveTab('orders')}
-          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${
-            activeTab === 'orders'
-              ? 'md:border-b-2 font-semibold'
-              : 'text-gray-600'
-          }`}
+          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${activeTab === 'orders'
+            ? 'md:border-b-2 font-semibold'
+            : 'text-gray-600'
+            }`}
           style={activeTab === 'orders' ? { borderColor: '#F8A6B0', backgroundColor: activeTab === 'orders' ? '#FFF5F7' : 'transparent' } : { backgroundColor: 'transparent' }}
         >
           <ShoppingBag className="h-4 w-4" />
@@ -484,11 +532,10 @@ export default function AdminPage() {
         </button>
         <button
           onClick={() => setActiveTab('products')}
-          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${
-            activeTab === 'products'
-              ? 'md:border-b-2 font-semibold'
-              : 'text-gray-600'
-          }`}
+          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${activeTab === 'products'
+            ? 'md:border-b-2 font-semibold'
+            : 'text-gray-600'
+            }`}
           style={activeTab === 'products' ? { borderColor: '#F8A6B0', backgroundColor: activeTab === 'products' ? '#FFF5F7' : 'transparent' } : { backgroundColor: 'transparent' }}
         >
           <Package className="h-4 w-4" />
@@ -496,15 +543,25 @@ export default function AdminPage() {
         </button>
         <button
           onClick={() => setActiveTab('users')}
-          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${
-            activeTab === 'users'
-              ? 'md:border-b-2 font-semibold'
-              : 'text-gray-600'
-          }`}
+          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${activeTab === 'users'
+            ? 'md:border-b-2 font-semibold'
+            : 'text-gray-600'
+            }`}
           style={activeTab === 'users' ? { borderColor: '#F8A6B0', backgroundColor: activeTab === 'users' ? '#FFF5F7' : 'transparent' } : { backgroundColor: 'transparent' }}
         >
           <Users className="h-4 w-4" />
           Utilisateurs
+        </button>
+        <button
+          onClick={() => setActiveTab('settings')}
+          className={`pb-2 px-4 flex items-center gap-2 rounded-lg md:rounded-none ${activeTab === 'settings'
+            ? 'md:border-b-2 font-semibold'
+            : 'text-gray-600'
+            }`}
+          style={activeTab === 'settings' ? { borderColor: '#F8A6B0', backgroundColor: activeTab === 'settings' ? '#FFF5F7' : 'transparent' } : { backgroundColor: 'transparent' }}
+        >
+          <Settings className="h-4 w-4" />
+          Paramètres
         </button>
       </div>
 
@@ -574,7 +631,7 @@ export default function AdminPage() {
                   <h3 className="font-semibold mb-2">{product.nameFr}</h3>
                   <p className="text-sm text-gray-600 mb-2">{product.nameAr}</p>
                   <p className="font-bold mb-4" style={{ color: '#F8A6B0' }}>
-                    {product.price.toFixed(2)} DA
+                    {product.price.toFixed(0)} DA
                   </p>
                   <div className="flex gap-2">
                     <Button
@@ -618,11 +675,10 @@ export default function AdminPage() {
                       <p className="font-semibold">{user.name || user.email}</p>
                       <p className="text-sm text-gray-600">{user.email}</p>
                       <span
-                        className={`inline-block mt-2 px-2 py-1 rounded text-xs ${
-                          user.role === 'ADMIN'
-                            ? 'bg-purple-100 text-purple-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
+                        className={`inline-block mt-2 px-2 py-1 rounded text-xs ${user.role === 'ADMIN'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-gray-100 text-gray-800'
+                          }`}
                       >
                         {user.role}
                       </span>
@@ -645,6 +701,52 @@ export default function AdminPage() {
               </Card>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Settings Tab */}
+      {activeTab === 'settings' && (
+        <div className="max-w-2xl">
+          <Card>
+            <CardHeader>
+              <CardTitle>Personnalisation</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div>
+                <Label>Couleur principale (Rose)</Label>
+                <div className="flex gap-4 mt-2 items-center">
+                  <Input
+                    type="color"
+                    value={themeColor}
+                    onChange={(e) => setThemeColor(e.target.value)}
+                    className="w-20 h-10 p-1 cursor-pointer"
+                  />
+                  <Input
+                    type="text"
+                    value={themeColor}
+                    onChange={(e) => setThemeColor(e.target.value)}
+                    className="w-32"
+                    placeholder="#RRGGBB"
+                  />
+                  <div
+                    className="w-10 h-10 rounded border"
+                    style={{ backgroundColor: themeColor }}
+                  />
+                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  Cette couleur sera utilisée pour les boutons, les prix et les accents dans toute l'application.
+                </p>
+              </div>
+
+              <Button
+                onClick={saveSettings}
+                disabled={isSavingSettings}
+                style={{ backgroundColor: themeColor }}
+              >
+                {isSavingSettings ? 'Enregistrement...' : 'Enregistrer les modifications'}
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       )}
 
@@ -735,10 +837,61 @@ export default function AdminPage() {
               </div>
             </div>
 
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 border p-3 rounded-lg">
+                  <input
+                    type="checkbox"
+                    id="isPopular"
+                    checked={productForm.isPopular}
+                    onChange={(e) => setProductForm({ ...productForm, isPopular: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="isPopular" className="text-sm font-medium cursor-pointer">
+                    Produit populaire (Affiché en accueil)
+                  </label>
+                </div>
+
+                <div className="flex items-center gap-2 border p-3 rounded-lg bg-yellow-50/50">
+                  <input
+                    type="checkbox"
+                    id="isPinned"
+                    checked={productForm.isPinned}
+                    onChange={(e) => setProductForm({ ...productForm, isPinned: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="isPinned" className="text-sm font-medium cursor-pointer">
+                    Épingler ce produit (S'affiche en premier)
+                  </label>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <Label>Texte du ruban (Optionnel)</Label>
+                  <Input
+                    value={productForm.ribbonText}
+                    onChange={(e) => setProductForm({ ...productForm, ribbonText: e.target.value })}
+                    className="mt-2"
+                    placeholder="Ex: PROMO, NOUVEAU..."
+                  />
+                </div>
+
+                <div>
+                  <Label>Label "Nouveau" jusqu'au</Label>
+                  <Input
+                    type="date"
+                    value={productForm.newUntil}
+                    onChange={(e) => setProductForm({ ...productForm, newUntil: e.target.value })}
+                    className="mt-2"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div>
               <Label>Image du produit *</Label>
               <div className="mt-2 space-y-3">
-                {/* Bouton d'upload */}
                 <div className="flex gap-2">
                   <label
                     htmlFor="image-upload"
@@ -771,7 +924,6 @@ export default function AdminPage() {
                   />
                 </div>
 
-                {/* Aperçu de l'image */}
                 {productForm.image && (
                   <div className="relative">
                     <img
@@ -791,7 +943,6 @@ export default function AdminPage() {
                   </div>
                 )}
 
-                {/* Option manuelle */}
                 <div>
                   <Label className="text-xs text-gray-600">Ou entrez une URL manuellement</Label>
                   <Input
@@ -818,19 +969,8 @@ export default function AdminPage() {
                 />
                 A des variantes
               </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={productForm.isPopular}
-                  onChange={(e) =>
-                    setProductForm({ ...productForm, isPopular: e.target.checked })
-                  }
-                />
-                Produit populaire
-              </label>
             </div>
 
-            {/* Gestion des variantes */}
             {productForm.hasVariants && (
               <div className="border-t pt-4 mt-4">
                 <div className="flex justify-between items-center mb-4">
@@ -839,7 +979,7 @@ export default function AdminPage() {
                     type="button"
                     size="sm"
                     onClick={() => setVariants([...variants, { nameFr: '', nameAr: '', priceAdjustment: 0 }])}
-                    style={{ backgroundColor: '#F8A6B0' }}
+                    style={{ backgroundColor: themeColor }}
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Ajouter une variante
@@ -906,7 +1046,7 @@ export default function AdminPage() {
                           />
                           {variant.priceAdjustment > 0 && (
                             <p className="text-xs text-gray-500 mt-1">
-                              Prix: {variant.priceAdjustment.toFixed(2)} DA
+                              Prix: {variant.priceAdjustment.toFixed(0)} DA
                             </p>
                           )}
                         </div>
@@ -927,7 +1067,7 @@ export default function AdminPage() {
             <Button variant="outline" onClick={() => setShowProductDialog(false)}>
               Annuler
             </Button>
-            <Button onClick={saveProduct} style={{ backgroundColor: '#F8A6B0' }}>
+            <Button onClick={saveProduct} style={{ backgroundColor: themeColor }}>
               {editingProduct ? 'Modifier' : 'Créer'}
             </Button>
           </DialogFooter>
@@ -972,7 +1112,7 @@ export default function AdminPage() {
             <Button variant="outline" onClick={() => setShowUserDialog(false)}>
               Annuler
             </Button>
-            <Button onClick={saveUser} style={{ backgroundColor: '#F8A6B0' }}>
+            <Button onClick={saveUser} style={{ backgroundColor: themeColor }}>
               Créer
             </Button>
           </DialogFooter>

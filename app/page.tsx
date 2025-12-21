@@ -119,24 +119,24 @@ export default function Home() {
             <Button
               variant={selectedType === 'ALL' ? 'default' : 'outline'}
               onClick={() => setSelectedType('ALL')}
-              style={selectedType === 'ALL' ? { backgroundColor: '#F8A6B0', color: 'white' } : {}}
-              className="hover:bg-[#F8A6B0] hover:text-white transition-colors"
+              style={selectedType === 'ALL' ? { backgroundColor: 'var(--brand-pink)', color: 'white' } : {}}
+              className="hover:bg-[var(--brand-pink)] hover:text-white transition-colors"
             >
               {t.products.allProducts}
             </Button>
             <Button
               variant={selectedType === 'PACKAGING' ? 'default' : 'outline'}
               onClick={() => setSelectedType('PACKAGING')}
-              style={selectedType === 'PACKAGING' ? { backgroundColor: '#F8A6B0', color: 'white' } : {}}
-              className="hover:bg-[#F8A6B0] hover:text-white transition-colors"
+              style={selectedType === 'PACKAGING' ? { backgroundColor: 'var(--brand-pink)', color: 'white' } : {}}
+              className="hover:bg-[var(--brand-pink)] hover:text-white transition-colors"
             >
               {t.products.packaging}
             </Button>
             <Button
               variant={selectedType === 'FOOD' ? 'default' : 'outline'}
               onClick={() => setSelectedType('FOOD')}
-              style={selectedType === 'FOOD' ? { backgroundColor: '#F8A6B0', color: 'white' } : {}}
-              className="hover:bg-[#F8A6B0] hover:text-white transition-colors"
+              style={selectedType === 'FOOD' ? { backgroundColor: 'var(--brand-pink)', color: 'white' } : {}}
+              className="hover:bg-[var(--brand-pink)] hover:text-white transition-colors"
             >
               {t.products.food}
             </Button>

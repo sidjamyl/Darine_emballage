@@ -86,6 +86,9 @@ model Product {
   image         String
   hasVariants   Boolean       @default(false)
   isPopular     Boolean       @default(false)
+  isPinned      Boolean       @default(false)
+  ribbonText    String?
+  newUntil      DateTime?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   variants      ProductVariant[]
@@ -181,4 +184,12 @@ model HeroSlide {
   updatedAt   DateTime @updatedAt
 
   @@map("hero_slide")
+}
+
+model SiteSettings {
+  id          String   @id @default(cuid())
+  themeColor  String   @default("#D63384") // Darker pink default
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_settings")
 }

@@ -2,6 +2,8 @@
 
 import { useLanguage } from '@/lib/language-context';
 import Link from 'next/link';
+import { Facebook, Instagram } from 'lucide-react';
+import { TikTokIcon } from './tiktok-icon';
 
 export function Footer() {
   const { t } = useLanguage();
@@ -27,22 +29,22 @@ export function Footer() {
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/" className="hover:text-[#F8A6B0] transition-colors">
+                <Link href="/" className="hover:text-[var(--brand-pink)] transition-colors">
                   {t.nav.home}
                 </Link>
               </li>
               <li>
-                <Link href="/catalog" className="hover:text-[#F8A6B0] transition-colors">
+                <Link href="/catalog" className="hover:text-[var(--brand-pink)] transition-colors">
                   {t.nav.catalog}
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-[#F8A6B0] transition-colors">
+                <Link href="/about" className="hover:text-[var(--brand-pink)] transition-colors">
                   {t.nav.about}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-[#F8A6B0] transition-colors">
+                <Link href="/contact" className="hover:text-[var(--brand-pink)] transition-colors">
                   {t.nav.contact}
                 </Link>
               </li>
@@ -58,6 +60,18 @@ export function Footer() {
               <li>{t.contact.phone}: +213 540153721</li>
               <li>{t.contact.address}: El-Biar Alger, Algérie</li>
             </ul>
+
+            <div className="flex items-center gap-3 mt-4">
+              <a href="https://www.instagram.com/darine_emballage_el_biar/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-white/50 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300 hover:shadow-sm">
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a href="https://web.facebook.com/p/Darine-emballage-el-biar-100091588476165/?_rdc=1&_rdr#" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-white/50 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300 hover:shadow-sm">
+                <Facebook className="h-4 w-4" />
+              </a>
+              <a href="https://www.tiktok.com/@darine.emballage_el_biar" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-white/50 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300 hover:shadow-sm">
+                <TikTokIcon className="h-4 w-4" />
+              </a>
+            </div>
           </div>
         </div>
 

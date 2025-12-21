@@ -1,7 +1,11 @@
 'use client';
 
+
+
 import { useState } from 'react';
+import Link from 'next/link';
 import { useLanguage } from '@/lib/language-context';
+import { ProductWithVariants } from '@/lib/types/product.types';
 import { useCart } from '@/lib/cart-context';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,28 +27,8 @@ import {
 } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
-interface ProductVariant {
-  id: string;
-  nameFr: string;
-  nameAr: string;
-  priceAdjustment: number;
-}
-
-interface Product {
-  id: string;
-  nameFr: string;
-  nameAr: string;
-  descriptionFr: string;
-  descriptionAr: string;
-  price: number;
-  type: 'FOOD' | 'PACKAGING';
-  image: string;
-  hasVariants: boolean;
-  variants?: ProductVariant[];
-}
-
 interface ProductCardProps {
-  product: Product;
+  product: ProductWithVariants;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
@@ -58,6 +42,10 @@ export function ProductCard({ product }: ProductCardProps) {
   const name = locale === 'ar' ? product.nameAr : product.nameFr;
   const description = locale === 'ar' ? product.descriptionAr : product.descriptionFr;
   const typeLabel = product.type === 'FOOD' ? t.products.food : t.products.packaging;
+  const isNew = product.newUntil && new Date(product.newUntil) > new Date();
+
+  // Need to add translation for "New" if not exists, fallback to hardcoded for now or use key
+  const newLabel = locale === 'ar' ? 'جديد' : 'Nouveau';
 
   const handleAddToCart = () => {
     if (product.hasVariants && product.variants && product.variants.length > 0) {
@@ -81,7 +69,7 @@ export function ProductCard({ product }: ProductCardProps) {
     addItem({
       productId: product.id,
       productName: name,
-      quantity: 1,
+      quantity: quantity,
       unitPrice: product.price,
       image: product.image,
     });
@@ -92,7 +80,7 @@ export function ProductCard({ product }: ProductCardProps) {
     addItem({
       productId: product.id,
       productName: name,
-      quantity: 1,
+      quantity: quantity,
       unitPrice: product.price,
       image: product.image,
     });
@@ -139,41 +127,91 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <>
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="relative h-48 overflow-hidden">
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow relative">
+        <Link href={`/catalog/${product.id}`} className="block relative h-48 overflow-hidden group">
           <img
             src={product.image}
             alt={name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
-          <div className="absolute top-2 right-2 bg-[#F8A6B0] text-white px-3 py-1 rounded-full text-sm">
+          <div className="absolute top-2 right-2 bg-[var(--brand-pink)] text-white px-3 py-1 rounded-full text-sm font-medium z-10 shadow-sm">
             {typeLabel}
           </div>
-        </div>
+
+          {/* Promotional Ribbon */}
+          {product.ribbonText && (
+            <div className="absolute top-2 left-2 bg-red-600 text-white px-3 py-1 text-xs font-bold rounded-md shadow-md z-10">
+              {product.ribbonText}
+            </div>
+          )}
+
+          {/* New Label */}
+          {isNew && !product.ribbonText && (
+            <div className="absolute top-2 left-2 bg-green-500 text-white px-3 py-1 rounded-md text-sm font-bold shadow-md z-10 animate-pulse">
+              {newLabel}
+            </div>
+          )}
+          {isNew && product.ribbonText && (
+            <div className="absolute top-10 left-2 bg-green-500 text-white px-3 py-1 rounded-md text-sm font-bold shadow-md z-10 animate-pulse">
+              {newLabel}
+            </div>
+          )}
+        </Link>
         <CardContent className="p-4">
-          <h3 className="font-semibold text-lg mb-2" style={{ color: '#383738' }}>
-            {name}
-          </h3>
-          <p className="text-sm text-gray-600 mb-2 line-clamp-2">{description}</p>
-          <p className="text-xl font-bold" style={{ color: '#F8A6B0' }}>
-            {product.price.toFixed(2)} DA
+          <Link href={`/catalog/${product.id}`}>
+            <h3 className="font-bold text-xl mb-2 hover:text-[var(--brand-pink)] transition-colors" style={{ color: '#383738' }}>
+              {name}
+            </h3>
+          </Link>
+          <p className="text-sm text-gray-600 mb-4 line-clamp-2 min-h-[40px]">{description}</p>
+          <p className="text-2xl font-bold" style={{ color: 'var(--brand-pink)' }}>
+            {product.price.toFixed(0)} DA
           </p>
         </CardContent>
-        <CardFooter className="p-4 pt-0 flex flex-col gap-2">
-          <Button
-            onClick={handleAddToCart}
-            className="w-full"
-            style={{ backgroundColor: '#F8A6B0' }}
-          >
-            {t.products.addToCart}
-          </Button>
-          <Button
-            onClick={handleOrderNow}
-            variant="outline"
-            className="w-full"
-          >
-            {t.products.orderNow}
-          </Button>
+        <CardFooter className="p-4 pt-0 flex flex-col gap-3">
+          {/* Quantity Selector */}
+          <div className="flex items-center w-full gap-2 bg-gray-50 rounded-lg p-1 border">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-md"
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            >
+              -
+            </Button>
+            <Input
+              type="number"
+              min="1"
+              value={quantity}
+              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+              className="h-8 text-center border-none bg-transparent focus-visible:ring-0 px-0"
+            />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-md"
+              onClick={() => setQuantity(quantity + 1)}
+            >
+              +
+            </Button>
+          </div>
+
+          <div className="flex flex-col gap-2 w-full">
+            <Button
+              onClick={handleAddToCart}
+              className="w-full text-white font-medium"
+              style={{ backgroundColor: 'var(--brand-pink)' }}
+            >
+              {t.products.addToCart}
+            </Button>
+            <Button
+              onClick={handleOrderNow}
+              variant="outline"
+              className="w-full border-[var(--brand-pink)] text-[var(--brand-pink)] hover:bg-pink-50"
+            >
+              {t.products.orderNow}
+            </Button>
+          </div>
         </CardFooter>
       </Card>
 
@@ -193,15 +231,17 @@ export function ProductCard({ product }: ProductCardProps) {
                 <SelectContent>
                   {/* Produit de base */}
                   <SelectItem key="base" value="base">
-                    {locale === 'ar' ? 'قياسي' : 'Standard'} - {product.price.toFixed(2)} DA
+                    {locale === 'ar' ? 'قياسي' : 'Standard'} - {product.price.toFixed(0)} DA
                   </SelectItem>
                   {/* Variantes */}
                   {product.variants?.map((variant) => {
                     const variantName = locale === 'ar' ? variant.nameAr : variant.nameFr;
                     const variantPrice = variant.priceAdjustment;
+                    // Ensure ID exists (it should for DB products)
+                    const vId = variant.id || 'unknown';
                     return (
-                      <SelectItem key={variant.id} value={variant.id}>
-                        {variantName} - {variantPrice.toFixed(2)} DA
+                      <SelectItem key={vId} value={vId}>
+                        {variantName} - {variantPrice.toFixed(0)} DA
                       </SelectItem>
                     );
                   })}
@@ -226,7 +266,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <Button
               onClick={handleConfirmVariant}
               disabled={!selectedVariant}
-              style={{ backgroundColor: '#F8A6B0' }}
+              style={{ backgroundColor: 'var(--brand-pink)' }}
             >
               {actionType === 'order' ? t.products.orderNow : t.products.addToCart}
             </Button>

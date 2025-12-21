@@ -44,15 +44,13 @@ export default function CartPage() {
   const { t, locale } = useLanguage();
   const { items, removeItem, updateQuantity, clearCart, getSubtotal } = useCart();
   const router = useRouter();
-  
+
   const [shippingCosts, setShippingCosts] = useState<ShippingCost[]>([]);
   const [wilayas, setWilayas] = useState<Wilaya[]>([]);
   const [municipalities, setMunicipalities] = useState<Municipality[]>([]);
   const [customerInfo, setCustomerInfo] = useState({
     fullName: '',
     phone: '',
-    email: '',
-    address: '',
     wilayaId: '',
     municipalityId: '',
     deliveryType: 'home' as 'home' | 'stopdesk',
@@ -106,28 +104,28 @@ export default function CartPage() {
   useEffect(() => {
 
     fetch(`/api/elogistia/shipping-costs/`)
-        .then((res) => res.json())
-        .then((data) => {
-          console.log('Shipping costs received:', data);
-          console.log('Shipping costs body:', data);
-          setShippingCosts(data );
-        })
-        .catch((error) => {
-          console.error('Error fetching shipping costs:', error);
-          toast.error(t.common.error);
-        });
-    } , []);
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('Shipping costs received:', data);
+        console.log('Shipping costs body:', data);
+        setShippingCosts(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching shipping costs:', error);
+        toast.error(t.common.error);
+      });
+  }, []);
   const subtotal = getSubtotal();
-  
+
   const selectedWilaya = wilayas.find((w) => w.Id === customerInfo.wilayaId);
   const selectedMunicipality = municipalities.find((m) => m.Id === customerInfo.municipalityId);
-  
+
   // Find shipping cost from the shippingCosts array
   const selectedShippingWilaya = shippingCosts.find((w) => w.wilayaID === customerInfo.wilayaId);
   const shippingCost = selectedShippingWilaya
     ? parseFloat(selectedShippingWilaya[customerInfo.deliveryType]) || 0
     : 0;
-  
+
   const total = subtotal + shippingCost;
 
   // Log calculations and selections
@@ -141,11 +139,10 @@ export default function CartPage() {
   console.log('Subtotal:', subtotal);
   console.log('Total:', total);
 
-  const canCheckout = 
+  const canCheckout =
     items.length > 0 &&
     customerInfo.fullName &&
     customerInfo.phone &&
-    customerInfo.address &&
     customerInfo.wilayaId &&
     customerInfo.municipalityId;
 
@@ -160,8 +157,8 @@ export default function CartPage() {
     const orderData = {
       customerName: customerInfo.fullName,
       customerPhone: customerInfo.phone,
-      customerEmail: customerInfo.email,
-      address: customerInfo.address,
+      customerEmail: 'client@darine-emballage.com', // Mock email
+      address: `Wilaya: ${selectedWilaya?.wilaya}, Commune: ${selectedMunicipality?.name}`, // Mock address using location
       wilayaId: customerInfo.wilayaId,
       wilaya: selectedWilaya?.wilaya || '',
       municipalityId: customerInfo.municipalityId,
@@ -219,7 +216,7 @@ export default function CartPage() {
           </h1>
           <Button
             onClick={() => router.push('/catalog')}
-            style={{ backgroundColor: '#F8A6B0' }}
+            style={{ backgroundColor: 'var(--brand-pink)' }}
           >
             {t.hero.viewCatalog}
           </Button>
@@ -253,8 +250,8 @@ export default function CartPage() {
                     {item.variantName && (
                       <p className="text-sm text-gray-600 mb-2">{item.variantName}</p>
                     )}
-                    <p className="font-bold" style={{ color: '#F8A6B0' }}>
-                      {item.unitPrice.toFixed(2)} DA
+                    <p className="font-bold" style={{ color: 'var(--brand-pink)' }}>
+                      {item.unitPrice.toFixed(0)} DA
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
@@ -279,7 +276,7 @@ export default function CartPage() {
                       className="w-20"
                     />
                     <p className="font-semibold">
-                      {(item.quantity * item.unitPrice).toFixed(2)} DA
+                      {(item.quantity * item.unitPrice).toFixed(0)} DA
                     </p>
                   </div>
                 </div>
@@ -320,30 +317,6 @@ export default function CartPage() {
               </div>
 
               <div>
-                <Label>{t.customer.email}</Label>
-                <Input
-                  type="email"
-                  value={customerInfo.email}
-                  onChange={(e) =>
-                    setCustomerInfo({ ...customerInfo, email: e.target.value })
-                  }
-                  className="mt-2"
-                />
-              </div>
-
-              <div>
-                <Label>{t.customer.address}</Label>
-                <Textarea
-                  value={customerInfo.address}
-                  onChange={(e) =>
-                    setCustomerInfo({ ...customerInfo, address: e.target.value })
-                  }
-                  rows={3}
-                  className="mt-2"
-                />
-              </div>
-
-              <div>
                 <Label>{t.customer.wilaya}</Label>
                 <Select
                   value={customerInfo.wilayaId}
@@ -357,7 +330,7 @@ export default function CartPage() {
                   <SelectContent>
                     {wilayas.map((wilaya, index) => (
                       <SelectItem key={`${wilaya.Id}-${index}`} value={wilaya.Id}>
-                        {wilaya.wilaya}
+                        {wilaya.Id} - {wilaya.wilaya}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -431,15 +404,15 @@ export default function CartPage() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>{t.cart.subtotal}</span>
-                  <span className="font-semibold">{subtotal.toFixed(2)} DA</span>
+                  <span className="font-semibold">{subtotal.toFixed(0)} DA</span>
                 </div>
                 <div className="flex justify-between">
                   <span>{t.cart.shipping}</span>
-                  <span className="font-semibold">{shippingCost.toFixed(2)} DA</span>
+                  <span className="font-semibold">{shippingCost.toFixed(0)} DA</span>
                 </div>
                 <div className="border-t pt-2 flex justify-between text-lg font-bold">
                   <span>{t.cart.total}</span>
-                  <span style={{ color: '#F8A6B0' }}>{total.toFixed(2)} DA</span>
+                  <span style={{ color: 'var(--brand-pink)' }}>{total.toFixed(0)} DA</span>
                 </div>
               </div>
 
@@ -447,7 +420,7 @@ export default function CartPage() {
                 onClick={handleCheckout}
                 disabled={!canCheckout || isSubmitting}
                 className="w-full mt-4"
-                style={{ backgroundColor: '#F8A6B0' }}
+                style={{ backgroundColor: 'var(--brand-pink)' }}
               >
                 {isSubmitting ? t.common.loading : t.cart.checkout}
               </Button>
@@ -461,6 +434,6 @@ export default function CartPage() {
           </Card>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

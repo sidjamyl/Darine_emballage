@@ -20,18 +20,18 @@ export default function AboutPage() {
 
             <div className="grid md:grid-cols-2 gap-8 mt-8">
               <div>
-                <h2 className="text-2xl font-semibold mb-4" style={{ color: '#F8A6B0' }}>
+                <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--brand-pink)' }}>
                   {locale === 'ar' ? 'مهمتنا' : 'Notre Mission'}
                 </h2>
                 <p style={{ color: '#383738' }}>
-                  {locale === 'ar' 
+                  {locale === 'ar'
                     ? 'نسعى لتقديم أفضل منتجات التغليف والمواد الغذائية بجودة عالية وأسعار تنافسية، مع خدمة توصيل سريعة وموثوقة في جميع أنحاء الجزائر.'
                     : 'Nous nous efforçons de fournir les meilleurs produits d\'emballage et alimentaires de haute qualité à des prix compétitifs, avec un service de livraison rapide et fiable dans toute l\'Algérie.'}
                 </p>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold mb-4" style={{ color: '#F8A6B0' }}>
+                <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--brand-pink)' }}>
                   {locale === 'ar' ? 'قيمنا' : 'Nos Valeurs'}
                 </h2>
                 <ul className="space-y-2" style={{ color: '#383738' }}>
@@ -45,12 +45,12 @@ export default function AboutPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="text-center p-6 rounded-lg" style={{ backgroundColor: '#F8A6B0' }}>
+            <div className="text-center p-6 rounded-lg" style={{ backgroundColor: 'var(--brand-pink)' }}>
               <div className="text-4xl font-bold text-white mb-2">500+</div>
               <div className="text-white">{locale === 'ar' ? 'منتج' : 'Produits'}</div>
             </div>
-           
-            <div className="text-center p-6 rounded-lg" style={{ backgroundColor: '#F8A6B0' }}>
+
+            <div className="text-center p-6 rounded-lg" style={{ backgroundColor: 'var(--brand-pink)' }}>
               <div className="text-4xl font-bold text-white mb-2">58</div>
               <div className="text-white">{locale === 'ar' ? 'ولاية مُغطاة' : 'Wilayas couvertes'}</div>
             </div>

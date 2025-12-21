@@ -289,7 +289,7 @@ export function ProductDialog({
                         />
                         {variant.priceAdjustment > 0 && (
                           <p className="text-xs text-gray-500 mt-1">
-                            Prix: {variant.priceAdjustment.toFixed(2)} DA
+                            Prix: {variant.priceAdjustment.toFixed(0)} DA
                           </p>
                         )}
                       </div>

@@ -110,7 +110,7 @@ export default function ContactPage() {
                 type="submit"
                 disabled={isSubmitting}
                 className="w-full"
-                style={{ backgroundColor: '#F8A6B0' }}
+                style={{ backgroundColor: 'var(--brand-pink)' }}
               >
                 {isSubmitting ? t.common.loading : t.contact.send}
               </Button>
@@ -123,7 +123,7 @@ export default function ContactPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-start gap-4 mb-4">
-                <Phone className="h-6 w-6 mt-1" style={{ color: '#F8A6B0' }} />
+                <Phone className="h-6 w-6 mt-1" style={{ color: 'var(--brand-pink)' }} />
                 <div>
                   <h3 className="font-semibold mb-1" style={{ color: '#383738' }}>
                     {t.contact.phone}
@@ -133,7 +133,7 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-4 mb-4">
-                <MessageSquare className="h-6 w-6 mt-1" style={{ color: '#F8A6B0' }} />
+                <MessageSquare className="h-6 w-6 mt-1" style={{ color: 'var(--brand-pink)' }} />
                 <div>
                   <h3 className="font-semibold mb-1" style={{ color: '#383738' }}>
                     {t.contact.whatsapp}
@@ -142,8 +142,8 @@ export default function ContactPage() {
                 </div>
               </div>
 
-               <div className="flex items-start gap-4">
-                <MapPin className="h-6 w-6 mt-1" style={{ color: '#F8A6B0' }} />
+              <div className="flex items-start gap-4">
+                <MapPin className="h-6 w-6 mt-1" style={{ color: 'var(--brand-pink)' }} />
                 <div>
                   <h3 className="font-semibold mb-1" style={{ color: '#383738' }}>
                     {t.contact.address}

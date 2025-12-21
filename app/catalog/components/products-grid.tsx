@@ -7,10 +7,10 @@
 'use client';
 
 import { ProductCard } from '@/components/product-card';
-import { Product } from '@/lib/types';
+import { ProductWithVariants } from '@/lib/types/product.types';
 
 interface ProductsGridProps {
-  products: Product[];
+  products: ProductWithVariants[];
   t: any;
 }
 

@@ -29,7 +29,7 @@ export function ProductCardAdmin({ product, onEdit, onDelete }: ProductCardAdmin
         <h3 className="font-semibold mb-2">{product.nameFr}</h3>
         <p className="text-sm text-gray-600 mb-2">{product.nameAr}</p>
         <p className="font-bold mb-4" style={{ color: '#F8A6B0' }}>
-          {product.price.toFixed(2)} DA
+          {product.price.toFixed(0)} DA
         </p>
         <div className="flex gap-2">
           <Button

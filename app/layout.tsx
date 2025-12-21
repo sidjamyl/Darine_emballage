@@ -22,15 +22,20 @@ export const metadata: Metadata = {
   description: "Votre partenaire pour tous vos besoins en emballage et produits alimentaires",
 };
 
-export default function RootLayout({
+import { getSiteSettings } from "@/lib/actions";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+
   return (
     <html lang="fr" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        style={{ '--brand-pink': settings.themeColor } as React.CSSProperties}
       >
         <LanguageProvider>
           <CartProvider>

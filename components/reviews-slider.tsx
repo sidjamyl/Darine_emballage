@@ -64,11 +64,10 @@ export function ReviewsSlider({ reviews, autoPlayInterval = 6000 }: ReviewsSlide
                     {[...Array(5)].map((_, index) => (
                       <Star
                         key={index}
-                        className={`h-5 w-5 ${
-                          index < review.rating!
-                            ? 'fill-[#F8A6B0] text-[#F8A6B0]'
+                        className={`h-5 w-5 ${index < review.rating!
+                            ? 'fill-[var(--brand-pink)] text-[var(--brand-pink)]'
                             : 'text-gray-300'
-                        }`}
+                          }`}
                       />
                     ))}
                   </div>
@@ -114,11 +113,10 @@ export function ReviewsSlider({ reviews, autoPlayInterval = 6000 }: ReviewsSlide
                 <button
                   key={index}
                   onClick={() => setCurrentReview(index)}
-                  className={`h-2 w-2 rounded-full transition-all ${
-                    index === currentReview
-                      ? 'bg-[#F8A6B0] w-6'
+                  className={`h-2 w-2 rounded-full transition-all ${index === currentReview
+                      ? 'bg-[var(--brand-pink)] w-6'
                       : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
+                    }`}
                   aria-label={`Go to review ${index + 1}`}
                 />
               ))}

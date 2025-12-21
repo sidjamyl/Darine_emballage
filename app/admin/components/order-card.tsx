@@ -17,7 +17,7 @@ interface OrderCardProps {
 export function OrderCard({ order }: OrderCardProps) {
   // Debug: Afficher ce que reçoit le composant
   console.log('OrderCard received:', order);
-  
+
   return (
     <Card>
       <CardHeader>
@@ -29,15 +29,14 @@ export function OrderCard({ order }: OrderCardProps) {
             </p>
           </div>
           <span
-            className={`px-3 py-1 rounded-full text-sm font-semibold ${
-              order.status === 'PENDING'
-                ? 'bg-yellow-100 text-yellow-800'
-                : order.status === 'CONFIRMED'
+            className={`px-3 py-1 rounded-full text-sm font-semibold ${order.status === 'PENDING'
+              ? 'bg-yellow-100 text-yellow-800'
+              : order.status === 'CONFIRMED'
                 ? 'bg-green-100 text-green-800'
                 : order.status === 'CANCELLED'
-                ? 'bg-red-100 text-red-800'
-                : 'bg-blue-100 text-blue-800'
-            }`}
+                  ? 'bg-red-100 text-red-800'
+                  : 'bg-blue-100 text-blue-800'
+              }`}
           >
             {order.status}
           </span>
@@ -58,16 +57,16 @@ export function OrderCard({ order }: OrderCardProps) {
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
                 <span>Sous-total:</span>
-                <span>{order.subtotal.toFixed(2)} DA</span>
+                <span>{order.subtotal.toFixed(0)} DA</span>
               </div>
               <div className="flex justify-between">
                 <span>Livraison:</span>
-                <span>{order.shippingCost.toFixed(2)} DA</span>
+                <span>{order.shippingCost.toFixed(0)} DA</span>
               </div>
               <div className="flex justify-between font-bold">
                 <span>Total:</span>
                 <span style={{ color: '#F8A6B0' }}>
-                  {order.total.toFixed(2)} DA
+                  {order.total.toFixed(0)} DA
                 </span>
               </div>
             </div>
@@ -83,7 +82,7 @@ export function OrderCard({ order }: OrderCardProps) {
                   {item.productName}
                   {item.variantName && ` - ${item.variantName}`} x{item.quantity}
                 </span>
-                <span>{item.total.toFixed(2)} DA</span>
+                <span>{item.total.toFixed(0)} DA</span>
               </div>
             ))}
           </div>

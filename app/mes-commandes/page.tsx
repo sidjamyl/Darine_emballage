@@ -72,7 +72,7 @@ export default function MyOrdersPage() {
     try {
       setIsLoading(true);
       const response = await fetch('/api/my-orders');
-      
+
       if (!response.ok) {
         if (response.status === 401) {
           router.push('/login');
@@ -105,7 +105,7 @@ export default function MyOrdersPage() {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="flex flex-col items-center justify-center min-h-[400px]">
-          <Package className="h-16 w-16 animate-pulse" style={{ color: '#F8A6B0' }} />
+          <Package className="h-16 w-16 animate-pulse" style={{ color: 'var(--brand-pink)' }} />
           <p className="mt-4 text-gray-600">Chargement de vos commandes...</p>
         </div>
       </div>
@@ -149,9 +149,9 @@ export default function MyOrdersPage() {
           <ArrowLeft className="h-4 w-4 mr-2" />
           {t.back}
         </Button>
-        
+
         <div className="flex items-center gap-3 mb-2">
-          <Package className="h-8 w-8" style={{ color: '#F8A6B0' }} />
+          <Package className="h-8 w-8" style={{ color: 'var(--brand-pink)' }} />
           <h1 className="text-3xl font-bold" style={{ color: '#383738' }}>
             {t.title}
           </h1>
@@ -172,7 +172,7 @@ export default function MyOrdersPage() {
             </p>
             <Button
               onClick={() => router.push('/catalog')}
-              style={{ backgroundColor: '#F8A6B0' }}
+              style={{ backgroundColor: 'var(--brand-pink)' }}
             >
               {t.backToShop}
             </Button>

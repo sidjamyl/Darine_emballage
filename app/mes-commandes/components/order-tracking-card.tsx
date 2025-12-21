@@ -101,7 +101,7 @@ export function OrderTrackingCard({ order, onDownloadPDF }: OrderTrackingCardPro
         <div className="flex justify-between items-start">
           <div>
             <CardTitle className="text-lg flex items-center gap-2">
-              <Package className="h-5 w-5" style={{ color: '#F8A6B0' }} />
+              <Package className="h-5 w-5" style={{ color: 'var(--brand-pink)' }} />
               {order.orderNumber}
             </CardTitle>
             <p className="text-sm text-gray-600 mt-1">
@@ -122,7 +122,7 @@ export function OrderTrackingCard({ order, onDownloadPDF }: OrderTrackingCardPro
             <Button
               size="sm"
               onClick={() => onDownloadPDF(order)}
-              style={{ backgroundColor: '#F8A6B0' }}
+              style={{ backgroundColor: 'var(--brand-pink)' }}
               className="flex items-center gap-1"
             >
               <Download className="h-4 w-4" />
@@ -144,7 +144,7 @@ export function OrderTrackingCard({ order, onDownloadPDF }: OrderTrackingCardPro
               {order.trackingNumber && (
                 <div className="mt-3 p-2 bg-gray-50 rounded">
                   <p className="font-semibold text-xs text-gray-600">Numéro de suivi</p>
-                  <p className="font-mono text-sm" style={{ color: '#F8A6B0' }}>
+                  <p className="font-mono text-sm" style={{ color: 'var(--brand-pink)' }}>
                     {order.trackingNumber}
                   </p>
                 </div>
@@ -160,16 +160,16 @@ export function OrderTrackingCard({ order, onDownloadPDF }: OrderTrackingCardPro
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Sous-total:</span>
-                <span className="font-medium">{order.subtotal.toFixed(2)} DA</span>
+                <span className="font-medium">{order.subtotal.toFixed(0)} DA</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Livraison:</span>
-                <span className="font-medium">{order.shippingCost.toFixed(2)} DA</span>
+                <span className="font-medium">{order.shippingCost.toFixed(0)} DA</span>
               </div>
               <div className="flex justify-between pt-2 border-t font-bold text-base">
                 <span>Total:</span>
-                <span style={{ color: '#F8A6B0' }}>
-                  {order.total.toFixed(2)} DA
+                <span style={{ color: 'var(--brand-pink)' }}>
+                  {order.total.toFixed(0)} DA
                 </span>
               </div>
             </div>
@@ -195,11 +195,11 @@ export function OrderTrackingCard({ order, onDownloadPDF }: OrderTrackingCardPro
                     )}
                   </p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {item.unitPrice.toFixed(2)} DA × {item.quantity}
+                    {item.unitPrice.toFixed(0)} DA × {item.quantity}
                   </p>
                 </div>
-                <p className="font-semibold" style={{ color: '#F8A6B0' }}>
-                  {item.total.toFixed(2)} DA
+                <p className="font-semibold" style={{ color: 'var(--brand-pink)' }}>
+                  {item.total.toFixed(0)} DA
                 </p>
               </div>
             ))}

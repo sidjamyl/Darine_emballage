@@ -35,8 +35,8 @@ export function CartItemCard({ item, onRemove, onUpdateQuantity }: CartItemCardP
             {item.variantName && (
               <p className="text-sm text-gray-600 mb-2">{item.variantName}</p>
             )}
-            <p className="font-bold" style={{ color: '#F8A6B0' }}>
-              {item.unitPrice.toFixed(2)} DA
+            <p className="font-bold" style={{ color: 'var(--brand-pink)' }}>
+              {item.unitPrice.toFixed(0)} DA
             </p>
           </div>
           <div className="flex flex-col items-end gap-2">
@@ -61,7 +61,7 @@ export function CartItemCard({ item, onRemove, onUpdateQuantity }: CartItemCardP
               className="w-20"
             />
             <p className="font-semibold">
-              {(item.quantity * item.unitPrice).toFixed(2)} DA
+              {(item.quantity * item.unitPrice).toFixed(0)} DA
             </p>
           </div>
         </div>

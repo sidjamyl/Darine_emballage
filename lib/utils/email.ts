@@ -59,10 +59,10 @@ export async function sendOrderNotification(order: OrderData): Promise<boolean> 
             ${item.quantity}
           </td>
           <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">
-            ${item.unitPrice.toFixed(2)} DA
+            ${item.unitPrice.toFixed(0)} DA
           </td>
           <td style="padding: 10px; border: 1px solid #ddd; text-align: right; font-weight: bold;">
-            ${item.total.toFixed(2)} DA
+            ${item.total.toFixed(0)} DA
           </td>
         </tr>
       `
@@ -180,15 +180,15 @@ export async function sendOrderNotification(order: OrderData): Promise<boolean> 
               <div class="summary">
                 <div class="summary-row">
                   <span>Sous-total :</span>
-                  <span>${order.subtotal.toFixed(2)} DA</span>
+                  <span>${order.subtotal.toFixed(0)} DA</span>
                 </div>
                 <div class="summary-row">
                   <span>Frais de livraison :</span>
-                  <span>${order.shippingCost.toFixed(2)} DA</span>
+                  <span>${order.shippingCost.toFixed(0)} DA</span>
                 </div>
                 <div class="summary-row total">
                   <span>TOTAL :</span>
-                  <span>${order.total.toFixed(2)} DA</span>
+                  <span>${order.total.toFixed(0)} DA</span>
                 </div>
               </div>
 

@@ -23,6 +23,9 @@ export interface Product {
   image: string;
   hasVariants: boolean;
   isPopular: boolean;
+  isPinned: boolean;
+  ribbonText?: string;
+  newUntil?: string | Date;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -58,5 +61,8 @@ export interface ProductFormData {
   image: string;
   hasVariants: boolean;
   isPopular: boolean;
+  isPinned: boolean;
+  ribbonText?: string;
+  newUntil?: string;
   variants?: ProductVariant[];
 }

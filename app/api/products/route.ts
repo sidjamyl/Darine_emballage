@@ -7,16 +7,32 @@ const prisma = new PrismaClient();
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const popular = searchParams.get('popular');
+  const id = searchParams.get('id');
 
   try {
+    if (id) {
+      const product = await prisma.product.findUnique({
+        where: { id },
+        include: {
+          variants: true,
+        },
+      });
+
+      if (!product) {
+        return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+      }
+
+      return NextResponse.json(product);
+    }
     const products = await prisma.product.findMany({
       where: popular === 'true' ? { isPopular: true } : undefined,
       include: {
         variants: true,
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: [
+        { isPinned: 'desc' },
+        { createdAt: 'desc' },
+      ] as any,
     });
 
     return NextResponse.json(products);
@@ -30,7 +46,7 @@ export async function POST(request: Request) {
   try {
     const sessionUser = await getUser();
     console.log('POST /api/products - Session User:', sessionUser);
-    
+
     if (!sessionUser?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -46,11 +62,11 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    
+
     // Validation des champs obligatoires
     if (!body.nameFr || !body.nameAr || !body.descriptionFr || !body.descriptionAr || !body.price || !body.type || !body.image) {
-      return NextResponse.json({ 
-        error: 'Tous les champs sont obligatoires (nameFr, nameAr, descriptionFr, descriptionAr, price, type, image)' 
+      return NextResponse.json({
+        error: 'Tous les champs sont obligatoires (nameFr, nameAr, descriptionFr, descriptionAr, price, type, image)'
       }, { status: 400 });
     }
 
@@ -97,7 +113,7 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const sessionUser = await getUser();
-    
+
     if (!sessionUser?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -106,7 +122,7 @@ export async function PUT(request: Request) {
     const user = await prisma.user.findUnique({
       where: { id: sessionUser.id },
     });
-    
+
     if (!user || user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -119,11 +135,11 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    
+
     // Validation des champs obligatoires
     if (!body.nameFr || !body.nameAr || !body.descriptionFr || !body.descriptionAr || !body.price || !body.type || !body.image) {
-      return NextResponse.json({ 
-        error: 'Tous les champs sont obligatoires (nameFr, nameAr, descriptionFr, descriptionAr, price, type, image)' 
+      return NextResponse.json({
+        error: 'Tous les champs sont obligatoires (nameFr, nameAr, descriptionFr, descriptionAr, price, type, image)'
       }, { status: 400 });
     }
 
@@ -176,7 +192,7 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const sessionUser = await getUser();
-    
+
     if (!sessionUser?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -185,7 +201,7 @@ export async function DELETE(request: Request) {
     const user = await prisma.user.findUnique({
       where: { id: sessionUser.id },
     });
-    
+
     if (!user || user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

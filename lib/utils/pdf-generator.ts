@@ -33,10 +33,10 @@ interface Order {
 
 export async function generateOrderPDF(order: Order) {
   const doc = new jsPDF();
-  
+
   const primaryColor: [number, number, number] = [248, 166, 176]; // #F8A6B0
   const textColor: [number, number, number] = [56, 55, 56]; // #383738
-  
+
   let yPosition = 20;
 
   try {
@@ -44,18 +44,18 @@ export async function generateOrderPDF(order: Order) {
     const logoUrl = '/logo.png';
     const img = new Image();
     img.src = logoUrl;
-    
+
     await new Promise((resolve, reject) => {
       img.onload = resolve;
       img.onerror = reject;
     });
-    
+
     // Calculate logo dimensions (max width: 40mm, maintain aspect ratio)
     const maxWidth = 40;
     const aspectRatio = img.width / img.height;
     const logoWidth = Math.min(maxWidth, img.width * 0.1);
     const logoHeight = logoWidth / aspectRatio;
-    
+
     doc.addImage(img, 'PNG', 15, yPosition, logoWidth, logoHeight);
     yPosition += logoHeight + 10;
   } catch (error) {
@@ -75,7 +75,7 @@ export async function generateOrderPDF(order: Order) {
   doc.setTextColor(textColor[0], textColor[1], textColor[2]);
   doc.text(`Commande N° : ${order.orderNumber}`, 15, yPosition);
   yPosition += 7;
-  
+
   const orderDate = new Date(order.createdAt).toLocaleDateString('fr-FR', {
     year: 'numeric',
     month: 'long',
@@ -124,15 +124,15 @@ export async function generateOrderPDF(order: Order) {
 
   // Prepare table data
   const tableData = order.items.map((item) => {
-    const productName = item.variantName 
+    const productName = item.variantName
       ? `${item.productName} - ${item.variantName}`
       : item.productName;
-    
+
     return [
       productName,
       item.quantity.toString(),
-      `${item.unitPrice.toFixed(2)} DA`,
-      `${item.total.toFixed(2)} DA`,
+      `${item.unitPrice.toFixed(0)} DA`,
+      `${item.total.toFixed(0)} DA`,
     ];
   });
 
@@ -164,27 +164,27 @@ export async function generateOrderPDF(order: Order) {
   // Summary box
   const summaryX = 120;
   const summaryWidth = 75;
-  
+
   doc.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.setLineWidth(0.5);
   doc.rect(summaryX, yPosition, summaryWidth, 25);
-  
+
   yPosition += 7;
   doc.setFontSize(10);
   doc.setTextColor(textColor[0], textColor[1], textColor[2]);
   doc.text('Sous-total :', summaryX + 3, yPosition);
-  doc.text(`${order.subtotal.toFixed(2)} DA`, summaryX + summaryWidth - 3, yPosition, { align: 'right' });
-  
+  doc.text(`${order.subtotal.toFixed(0)} DA`, summaryX + summaryWidth - 3, yPosition, { align: 'right' });
+
   yPosition += 6;
   doc.text('Frais de livraison :', summaryX + 3, yPosition);
-  doc.text(`${order.shippingCost.toFixed(2)} DA`, summaryX + summaryWidth - 3, yPosition, { align: 'right' });
-  
+  doc.text(`${order.shippingCost.toFixed(0)} DA`, summaryX + summaryWidth - 3, yPosition, { align: 'right' });
+
   yPosition += 8;
   doc.setFontSize(12);
   doc.setFont('bold');
   doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.text('TOTAL :', summaryX + 3, yPosition);
-  doc.text(`${order.total.toFixed(2)} DA`, summaryX + summaryWidth - 3, yPosition, { align: 'right' });
+  doc.text(`${order.total.toFixed(0)} DA`, summaryX + summaryWidth - 3, yPosition, { align: 'right' });
 
   // Footer
   yPosition = 270;

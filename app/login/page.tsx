@@ -80,13 +80,13 @@ export default function LoginPage() {
               type="submit"
               disabled={isLoading}
               className="w-full"
-              style={{ backgroundColor: '#F8A6B0' }}
+              style={{ backgroundColor: 'var(--brand-pink)' }}
             >
               {isLoading ? 'Connexion...' : 'Se connecter'}
             </Button>
           </form>
 
-       
+
         </CardContent>
       </Card>
     </div>
