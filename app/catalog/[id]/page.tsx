@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { ArrowLeft, ShoppingCart, Truck } from 'lucide-react';
+import { ArrowLeft, ShoppingCart } from 'lucide-react';
 
 interface ProductVariant {
     id: string;
@@ -38,7 +38,7 @@ export default function ProductPage() {
     const { id } = useParams();
     const router = useRouter();
     const { t, locale } = useLanguage();
-    const { addItem } = useCart();
+    const { addItem, openCart } = useCart();
 
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
@@ -88,11 +88,7 @@ export default function ProductPage() {
         });
 
         toast.success(t.products.addToCart);
-    };
-
-    const handleOrderNow = () => {
-        handleAddToCart();
-        router.push('/cart');
+        openCart();
     };
 
     if (loading) {
@@ -234,19 +230,11 @@ export default function ProductPage() {
                         <div className="flex flex-col sm:flex-row gap-3 pt-4">
                             <Button
                                 onClick={handleAddToCart}
-                                className="flex-1 h-12 text-lg"
+                                className="flex-1 h-12 text-lg cursor-pointer"
                                 style={{ backgroundColor: 'var(--brand-pink)' }}
                             >
                                 <ShoppingCart className="mr-2 h-5 w-5" />
                                 {t.products.addToCart}
-                            </Button>
-                            <Button
-                                onClick={handleOrderNow}
-                                variant="outline"
-                                className="flex-1 h-12 text-lg border-[var(--brand-pink)] text-[var(--brand-pink)] hover:bg-pink-50"
-                            >
-                                <Truck className="mr-2 h-5 w-5" />
-                                {t.products.orderNow}
                             </Button>
                         </div>
 

@@ -18,7 +18,6 @@ import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Trash2, ShoppingCart } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { set } from 'better-auth';
 
 interface Wilaya {
   Id: string;
@@ -57,21 +56,11 @@ export default function CartPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Log customerInfo whenever it changes
-  useEffect(() => {
-    console.log('=== CUSTOMER INFO UPDATED ===');
-    console.log(customerInfo);
-  }, [customerInfo]);
-
   useEffect(() => {
     // Fetch wilayas from Elogistia
     fetch('/api/elogistia/wilayas')
       .then((res) => res.json())
       .then((data) => {
-        console.log('=== WILAYAS API RESPONSE ===');
-        console.log('Full data:', data);
-        console.log('Data.body:', data.body);
-        console.log('ItemCount:', data.itemCount);
         setWilayas(data);
       })
       .catch(() => toast.error(t.common.error));
@@ -80,15 +69,12 @@ export default function CartPage() {
   useEffect(() => {
     // Fetch municipalities when wilaya changes
     if (customerInfo.wilayaId) {
-      console.log('Fetching municipalities for wilaya:', customerInfo.wilayaId);
       fetch(`/api/elogistia/municipalities/${customerInfo.wilayaId}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log('Municipalities received:', data);
           setMunicipalities(data);
         })
-        .catch((error) => {
-          console.error('Error fetching municipalities:', error);
+        .catch(() => {
           toast.error(t.common.error);
         });
     } else {
@@ -106,12 +92,9 @@ export default function CartPage() {
     fetch(`/api/elogistia/shipping-costs/`)
       .then((res) => res.json())
       .then((data) => {
-        console.log('Shipping costs received:', data);
-        console.log('Shipping costs body:', data);
         setShippingCosts(data);
       })
-      .catch((error) => {
-        console.error('Error fetching shipping costs:', error);
+      .catch(() => {
         toast.error(t.common.error);
       });
   }, []);
@@ -127,17 +110,6 @@ export default function CartPage() {
     : 0;
 
   const total = subtotal + shippingCost;
-
-  // Log calculations and selections
-  console.log('=== CART CALCULATIONS ===');
-  console.log('Wilayas array:', wilayas);
-  console.log('Selected wilaya ID:', customerInfo.wilayaId);
-  console.log('Selected wilaya object:', selectedWilaya);
-  console.log('Selected municipality:', selectedMunicipality);
-  console.log('Delivery type:', customerInfo.deliveryType);
-  console.log('Shipping cost:', shippingCost);
-  console.log('Subtotal:', subtotal);
-  console.log('Total:', total);
 
   const canCheckout =
     items.length > 0 &&
@@ -176,9 +148,6 @@ export default function CartPage() {
         total: item.quantity * item.unitPrice,
       })),
     };
-
-    console.log('=== SENDING ORDER ===');
-    console.log('Order data:', orderData);
 
     try {
       const response = await fetch('/api/orders', {

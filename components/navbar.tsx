@@ -12,7 +12,7 @@ import { authClient } from '@/lib/auth-client';
 
 export function Navbar() {
   const { t } = useLanguage();
-  const { items } = useCart();
+  const { items, openCart } = useCart();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -80,14 +80,14 @@ export function Navbar() {
                 {t.nav.myOrders || 'Mes Commandes'}
               </Link>
             )}
-            <Link href="/cart" className="relative hover:text-[var(--brand-pink)] transition-colors">
+            <button onClick={openCart} className="relative hover:text-[var(--brand-pink)] transition-colors cursor-pointer">
               <ShoppingCart className="h-5 w-5" />
               {itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-[var(--brand-pink)] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {itemCount}
                 </span>
               )}
-            </Link>
+            </button>
           </div>
 
           {/* Desktop Language Switcher */}
@@ -98,14 +98,14 @@ export function Navbar() {
           {/* Mobile Menu Button, Cart & Language */}
           <div className="flex md:hidden items-center gap-3">
             <LanguageSwitcher />
-            <Link href="/cart" className="relative hover:text-[var(--brand-pink)] transition-colors">
+            <button onClick={openCart} className="relative hover:text-[var(--brand-pink)] transition-colors cursor-pointer">
               <ShoppingCart className="h-6 w-6" />
               {itemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-[var(--brand-pink)] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {itemCount}
                 </span>
               )}
-            </Link>
+            </button>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"

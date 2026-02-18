@@ -6,6 +6,7 @@ import { CartProvider } from "@/lib/cart-context";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
+import { CartDrawer } from "@/components/cart-drawer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,6 +43,7 @@ export default async function RootLayout({
             <Navbar />
             <main className="min-h-screen">{children}</main>
             <Footer />
+            <CartDrawer />
             <Toaster />
           </CartProvider>
         </LanguageProvider>

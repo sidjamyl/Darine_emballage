@@ -51,6 +51,10 @@ export const translations = {
       checkout: 'Finaliser la commande',
       continueToPayment: 'Continuer',
       fillInfo: 'Veuillez remplir vos informations avant de finaliser la commande.',
+      continueShopping: 'Continuer mes achats',
+      yourCart: 'Votre panier',
+      items: 'article(s)',
+      orderSuccess: 'Votre commande a été envoyée avec succès! Nous vous contacterons bientôt',
     },
     // Customer Info
     customer: {
@@ -174,6 +178,10 @@ export const translations = {
       checkout: 'إتمام الطلب',
       continueToPayment: 'متابعة',
       fillInfo: 'يرجى ملء معلوماتك قبل إتمام الطلب.',
+      continueShopping: 'متابعة التسوق',
+      yourCart: 'سلة التسوق',
+      items: 'منتج(ات)',
+      orderSuccess: 'تم إرسال طلبك بنجاح! سنتصل بك قريباً',
     },
     // Customer Info
     customer: {

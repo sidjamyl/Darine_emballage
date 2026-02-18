@@ -33,11 +33,10 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { locale, t } = useLanguage();
-  const { addItem } = useCart();
+  const { addItem, openCart } = useCart();
   const [showVariantDialog, setShowVariantDialog] = useState(false);
   const [selectedVariant, setSelectedVariant] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
-  const [actionType, setActionType] = useState<'cart' | 'order'>('cart');
 
   const name = locale === 'ar' ? product.nameAr : product.nameFr;
   const description = locale === 'ar' ? product.descriptionAr : product.descriptionFr;
@@ -49,19 +48,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const handleAddToCart = () => {
     if (product.hasVariants && product.variants && product.variants.length > 0) {
-      setActionType('cart');
       setShowVariantDialog(true);
     } else {
       addToCartDirect();
-    }
-  };
-
-  const handleOrderNow = () => {
-    if (product.hasVariants && product.variants && product.variants.length > 0) {
-      setActionType('order');
-      setShowVariantDialog(true);
-    } else {
-      orderNowDirect();
     }
   };
 
@@ -74,17 +63,7 @@ export function ProductCard({ product }: ProductCardProps) {
       image: product.image,
     });
     toast.success(t.products.addToCart);
-  };
-
-  const orderNowDirect = () => {
-    addItem({
-      productId: product.id,
-      productName: name,
-      quantity: quantity,
-      unitPrice: product.price,
-      image: product.image,
-    });
-    window.location.href = '/cart';
+    openCart();
   };
 
   const handleConfirmVariant = () => {
@@ -117,12 +96,8 @@ export function ProductCard({ product }: ProductCardProps) {
     setShowVariantDialog(false);
     setSelectedVariant('');
     setQuantity(1);
-
-    if (actionType === 'order') {
-      window.location.href = '/cart';
-    } else {
-      toast.success(t.products.addToCart);
-    }
+    toast.success(t.products.addToCart);
+    openCart();
   };
 
   return (
@@ -196,22 +171,13 @@ export function ProductCard({ product }: ProductCardProps) {
             </Button>
           </div>
 
-          <div className="flex flex-col gap-2 w-full">
-            <Button
-              onClick={handleAddToCart}
-              className="w-full text-white font-medium"
-              style={{ backgroundColor: 'var(--brand-pink)' }}
-            >
-              {t.products.addToCart}
-            </Button>
-            <Button
-              onClick={handleOrderNow}
-              variant="outline"
-              className="w-full border-[var(--brand-pink)] text-[var(--brand-pink)] hover:bg-pink-50"
-            >
-              {t.products.orderNow}
-            </Button>
-          </div>
+          <Button
+            onClick={handleAddToCart}
+            className="w-full text-white font-medium cursor-pointer"
+            style={{ backgroundColor: 'var(--brand-pink)' }}
+          >
+            {t.products.addToCart}
+          </Button>
         </CardFooter>
       </Card>
 
@@ -268,7 +234,7 @@ export function ProductCard({ product }: ProductCardProps) {
               disabled={!selectedVariant}
               style={{ backgroundColor: 'var(--brand-pink)' }}
             >
-              {actionType === 'order' ? t.products.orderNow : t.products.addToCart}
+              {t.products.addToCart}
             </Button>
           </DialogFooter>
         </DialogContent>
