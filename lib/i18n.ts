@@ -135,7 +135,7 @@ export const translations = {
     // Navigation
     nav: {
       home: 'الرئيسية',
-      catalog: 'الكتالوج',
+      catalog: 'القائمة الرئيسية',
       about: 'من نحن',
       cart: 'السلة',
       contact: 'اتصل بنا',
@@ -146,7 +146,7 @@ export const translations = {
     hero: {
       title: 'دارين للتغليف',
       subtitle: 'جودة، تغليف، منتجات غذائية وتوصيل',
-      viewCatalog: 'عرض الكتالوج',
+      viewCatalog: 'عرض القائمة الرئيسية',
     },
     // Products
     products: {
@@ -172,8 +172,8 @@ export const translations = {
       title: 'سلتي',
       empty: 'سلتك فارغة',
       subtotal: 'المجموع الفرعي',
-      shipping: 'رسوم التوصيل',
-      total: 'المجموع الكلي',
+      shipping: 'سعر التوصيل',
+      total: 'المجموع ',
       remove: 'إزالة',
       checkout: 'إتمام الطلب',
       continueToPayment: 'متابعة',

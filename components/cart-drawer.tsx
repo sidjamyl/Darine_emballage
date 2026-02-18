@@ -467,7 +467,7 @@ export function CartDrawer() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">{t.cart.shipping}</span>
-                <span className="font-semibold">
+                <span className="font-semibold text-green-600">
                   {shippingCost > 0 ? `${shippingCost.toFixed(0)} DA` : '—'}
                 </span>
               </div>

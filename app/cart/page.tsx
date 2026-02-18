@@ -377,7 +377,7 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between">
                   <span>{t.cart.shipping}</span>
-                  <span className="font-semibold">{shippingCost.toFixed(0)} DA</span>
+                  <span className="font-semibold text-green-600">{shippingCost.toFixed(0)} DA</span>
                 </div>
                 <div className="border-t pt-2 flex justify-between text-lg font-bold">
                   <span>{t.cart.total}</span>

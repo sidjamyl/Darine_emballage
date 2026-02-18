@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 import { authClient } from '@/lib/auth-client';
 
 export function Navbar() {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const { items, openCart } = useCart();
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -47,16 +47,33 @@ export function Navbar() {
             </Link>
 
             {/* Social Icons - Desktop */}
-            <div className="hidden md:flex items-center gap-2">
-              <a href="https://www.instagram.com/darine_emballage_el_biar/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-50 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300 hover:shadow-md">
-                <Instagram className="h-4 w-4" />
-              </a>
-              <a href="https://web.facebook.com/p/Darine-emballage-el-biar-100091588476165/?_rdc=1&_rdr#" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-50 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300 hover:shadow-md">
-                <Facebook className="h-4 w-4" />
-              </a>
-              <a href="https://www.tiktok.com/@darine.emballage_el_biar" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-50 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300 hover:shadow-md">
-                <TikTokIcon className="h-4 w-4" />
-              </a>
+            <div className="hidden md:flex items-center gap-1">
+              {/* El Biar */}
+              <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-50 border border-gray-100" title="El Biar">
+                <span className="text-[10px] font-semibold text-gray-500 tracking-wide">{locale === 'ar' ? 'الأبيار' : 'El Biar'}</span>
+                <a href="https://www.instagram.com/darine_emballage_el_biar/" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-full text-gray-500 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300">
+                  <Instagram className="h-3.5 w-3.5" />
+                </a>
+                <a href="https://www.facebook.com/p/Darine-emballage-el-biar-100091588476165/" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-full text-gray-500 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300">
+                  <Facebook className="h-3.5 w-3.5" />
+                </a>
+                <a href="https://www.tiktok.com/@darine.emballage_el_biar" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-full text-gray-500 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300">
+                  <TikTokIcon className="h-3.5 w-3.5" />
+                </a>
+              </div>
+              {/* Sebala */}
+              <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-50 border border-gray-100" title="Sebala">
+                <span className="text-[10px] font-semibold text-gray-500 tracking-wide">{locale === 'ar' ? 'السبالة' : 'Sebbala'}</span>
+                <a href="https://www.instagram.com/darine_emballage_sebala_/" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-full text-gray-500 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300">
+                  <Instagram className="h-3.5 w-3.5" />
+                </a>
+                <a href="https://www.facebook.com/p/Darine-emballage-sebala-61565960947169/" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-full text-gray-500 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300">
+                  <Facebook className="h-3.5 w-3.5" />
+                </a>
+                <a href="https://www.tiktok.com/@darine_emballage_sebala" target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-full text-gray-500 hover:bg-[var(--brand-pink)] hover:text-white transition-all duration-300">
+                  <TikTokIcon className="h-3.5 w-3.5" />
+                </a>
+              </div>
             </div>
           </div>
 
@@ -164,16 +181,37 @@ export function Navbar() {
               )}
 
               {/* Mobile Social Icons */}
-              <div className="flex items-center gap-4 mt-4 pt-4 border-t justify-center">
-                <a href="https://www.instagram.com/darine_emballage_el_biar/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all">
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a href="https://web.facebook.com/p/Darine-emballage-el-biar-100091588476165/?_rdc=1&_rdr#" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all">
-                  <Facebook className="h-5 w-5" />
-                </a>
-                <a href="https://www.tiktok.com/@darine.emballage_el_biar" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all">
-                  <TikTokIcon className="h-5 w-5" />
-                </a>
+              <div className="mt-4 pt-4 border-t space-y-3">
+                {/* El Biar */}
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 mb-2 text-center">{locale === 'ar' ? 'الأبيار' : 'El Biar'}</p>
+                  <div className="flex items-center gap-4 justify-center">
+                    <a href="https://www.instagram.com/darine_emballage_el_biar/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all">
+                      <Instagram className="h-5 w-5" />
+                    </a>
+                    <a href="https://www.facebook.com/p/Darine-emballage-el-biar-100091588476165/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all">
+                      <Facebook className="h-5 w-5" />
+                    </a>
+                    <a href="https://www.tiktok.com/@darine.emballage_el_biar" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all">
+                      <TikTokIcon className="h-5 w-5" />
+                    </a>
+                  </div>
+                </div>
+                {/* Sebala */}
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 mb-2 text-center">{locale === 'ar' ? 'السبالة' : 'Sebbala'}</p>
+                  <div className="flex items-center gap-4 justify-center">
+                    <a href="https://www.instagram.com/darine_emballage_sebala_/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all">
+                      <Instagram className="h-5 w-5" />
+                    </a>
+                    <a href="https://www.facebook.com/p/Darine-emballage-sebala-61565960947169/" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all">
+                      <Facebook className="h-5 w-5" />
+                    </a>
+                    <a href="https://www.tiktok.com/@darine_emballage_sebala" target="_blank" rel="noopener noreferrer" className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-[var(--brand-pink)] hover:text-white transition-all">
+                      <TikTokIcon className="h-5 w-5" />
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

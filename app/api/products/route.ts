@@ -213,9 +213,12 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Product ID required' }, { status: 400 });
     }
 
-    await prisma.product.delete({
-      where: { id },
-    });
+    // Delete related records first, then the product
+    await prisma.$transaction([
+      prisma.orderItem.deleteMany({ where: { productId: id } }),
+      prisma.productVariant.deleteMany({ where: { productId: id } }),
+      prisma.product.delete({ where: { id } }),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (error) {

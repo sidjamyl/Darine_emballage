@@ -62,6 +62,7 @@ export function ProductCard({ product }: ProductCardProps) {
       unitPrice: product.price,
       image: product.image,
     });
+    setQuantity(1);
     toast.success(t.products.addToCart);
     openCart();
   };
@@ -103,53 +104,49 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow relative">
-        <Link href={`/catalog/${product.id}`} className="block relative h-48 overflow-hidden group">
+        <Link href={`/catalog/${product.id}`} className="block relative h-36 md:h-48 overflow-hidden group">
           <img
             src={product.image}
             alt={name}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
           />
-          <div className="absolute top-2 right-2 bg-[var(--brand-pink)] text-white px-3 py-1 rounded-full text-sm font-medium z-10 shadow-sm">
+          {/* Type badge - bottom right */}
+          <div className="absolute bottom-1.5 right-1.5 md:bottom-2 md:right-2 bg-[var(--brand-pink)] text-white px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-sm font-medium z-10 shadow-sm">
             {typeLabel}
           </div>
 
-          {/* Promotional Ribbon */}
-          {product.ribbonText && (
-            <div className="absolute top-2 left-2 bg-red-600 text-white px-3 py-1 text-xs font-bold rounded-md shadow-md z-10">
-              {product.ribbonText}
-            </div>
-          )}
-
-          {/* New Label */}
-          {isNew && !product.ribbonText && (
-            <div className="absolute top-2 left-2 bg-green-500 text-white px-3 py-1 rounded-md text-sm font-bold shadow-md z-10 animate-pulse">
-              {newLabel}
-            </div>
-          )}
-          {isNew && product.ribbonText && (
-            <div className="absolute top-10 left-2 bg-green-500 text-white px-3 py-1 rounded-md text-sm font-bold shadow-md z-10 animate-pulse">
-              {newLabel}
-            </div>
-          )}
+          {/* Left badges stack (promo + new) - top left */}
+          <div className="absolute top-1.5 left-1.5 md:top-2 md:left-2 z-10 flex flex-col gap-1">
+            {product.ribbonText && (
+              <div className="bg-red-600 text-white px-2 py-0.5 md:px-3 md:py-1 text-[10px] md:text-xs font-bold rounded-md shadow-md">
+                {product.ribbonText}
+              </div>
+            )}
+            {isNew && (
+              <div className="bg-green-500 text-white px-2 py-0.5 md:px-3 md:py-1 rounded-md text-[10px] md:text-sm font-bold shadow-md animate-pulse">
+                {newLabel}
+              </div>
+            )}
+          </div>
         </Link>
-        <CardContent className="p-4">
+        <CardContent className="p-2.5 md:p-4">
           <Link href={`/catalog/${product.id}`}>
-            <h3 className="font-bold text-xl mb-2 hover:text-[var(--brand-pink)] transition-colors" style={{ color: '#383738' }}>
+            <h3 className="font-bold text-sm md:text-xl mb-1 md:mb-2 hover:text-[var(--brand-pink)] transition-colors line-clamp-2" style={{ color: '#383738' }}>
               {name}
             </h3>
           </Link>
-          <p className="text-sm text-gray-600 mb-4 line-clamp-2 min-h-[40px]">{description}</p>
-          <p className="text-2xl font-bold" style={{ color: 'var(--brand-pink)' }}>
+          <p className="text-xs md:text-sm text-gray-600 mb-2 md:mb-4 line-clamp-2 min-h-[32px] md:min-h-[40px]">{description}</p>
+          <p className="text-lg md:text-2xl font-bold" style={{ color: 'var(--brand-pink)' }}>
             {product.price.toFixed(0)} DA
           </p>
         </CardContent>
-        <CardFooter className="p-4 pt-0 flex flex-col gap-3">
+        <CardFooter className="p-2.5 md:p-4 pt-0 flex flex-col gap-2 md:gap-3">
           {/* Quantity Selector */}
-          <div className="flex items-center w-full gap-2 bg-gray-50 rounded-lg p-1 border">
+          <div className="flex items-center w-full gap-1 md:gap-2 bg-gray-50 rounded-lg p-0.5 md:p-1 border">
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-md"
+              className="h-7 w-7 md:h-8 md:w-8 rounded-md"
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
             >
               -
@@ -159,12 +156,12 @@ export function ProductCard({ product }: ProductCardProps) {
               min="1"
               value={quantity}
               onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-              className="h-8 text-center border-none bg-transparent focus-visible:ring-0 px-0"
+              className="h-7 md:h-8 text-center border-none bg-transparent focus-visible:ring-0 px-0 text-sm"
             />
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 rounded-md"
+              className="h-7 w-7 md:h-8 md:w-8 rounded-md"
               onClick={() => setQuantity(quantity + 1)}
             >
               +
@@ -173,7 +170,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <Button
             onClick={handleAddToCart}
-            className="w-full text-white font-medium cursor-pointer"
+            className="w-full text-white font-medium cursor-pointer text-xs md:text-sm h-8 md:h-10"
             style={{ backgroundColor: 'var(--brand-pink)' }}
           >
             {t.products.addToCart}

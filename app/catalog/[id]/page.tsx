@@ -88,6 +88,7 @@ export default function ProductPage() {
         });
 
         toast.success(t.products.addToCart);
+        setQuantity(1);
         openCart();
     };
 

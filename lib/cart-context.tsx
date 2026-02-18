@@ -55,10 +55,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       );
 
       if (existingItemIndex > -1) {
-        // Update quantity if item already exists
-        const updatedItems = [...prevItems];
-        updatedItems[existingItemIndex].quantity += newItem.quantity;
-        return updatedItems;
+        // Update quantity if item already exists (immutable update)
+        return prevItems.map((item, index) =>
+          index === existingItemIndex
+            ? { ...item, quantity: item.quantity + newItem.quantity }
+            : item
+        );
       } else {
         // Add new item
         return [...prevItems, newItem];
