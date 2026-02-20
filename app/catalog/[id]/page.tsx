@@ -6,6 +6,7 @@ import { useLanguage } from '@/lib/language-context';
 import { useCart } from '@/lib/cart-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { QuantityInput } from '@/components/ui/quantity-input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
@@ -141,7 +142,7 @@ export default function ProductPage() {
                     <img
                         src={product.image}
                         alt={name}
-                        className="w-full h-auto object-cover max-h-[500px]"
+                        className="w-full h-auto object-contain max-h-[500px] bg-gray-50"
                     />
                     <div className="absolute top-4 right-4 bg-[var(--brand-pink)] text-white px-4 py-1.5 rounded-full font-medium shadow-sm">
                         {typeLabel}
@@ -210,11 +211,9 @@ export default function ProductPage() {
                                 >
                                     -
                                 </Button>
-                                <Input
-                                    type="number"
-                                    min="1"
+                                <QuantityInput
                                     value={quantity}
-                                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                                    onChange={(v) => setQuantity(v)}
                                     className="h-10 w-16 text-center border-none bg-transparent focus-visible:ring-0 px-0 text-lg font-bold"
                                 />
                                 <Button

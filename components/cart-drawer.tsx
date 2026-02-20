@@ -179,7 +179,7 @@ export function CartDrawer() {
       <SheetContent
         side={drawerSide}
         showCloseButton={false}
-        className="flex flex-col p-0 w-full sm:max-w-md"
+        className="flex flex-col p-0 w-[82%] max-w-md"
       >
         {/* ── Header ── */}
         <SheetHeader className="px-5 pt-5 pb-3 border-b shrink-0">

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/lib/language-context';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 interface Review {
@@ -85,26 +85,6 @@ export function ReviewsSlider({ reviews, autoPlayInterval = 6000 }: ReviewsSlide
               </div>
             </CardContent>
           </Card>
-
-          {/* Navigation Arrows */}
-          {reviews.length > 1 && (
-            <>
-              <button
-                onClick={prevReview}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg"
-                aria-label="Previous review"
-              >
-                <ChevronLeft className="h-6 w-6" style={{ color: '#383738' }} />
-              </button>
-              <button
-                onClick={nextReview}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 bg-white hover:bg-gray-100 p-2 rounded-full shadow-lg"
-                aria-label="Next review"
-              >
-                <ChevronRight className="h-6 w-6" style={{ color: '#383738' }} />
-              </button>
-            </>
-          )}
 
           {/* Indicators */}
           {reviews.length > 1 && (

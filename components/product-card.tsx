@@ -11,6 +11,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { QuantityInput } from '@/components/ui/quantity-input';
 import {
   Select,
   SelectContent,
@@ -104,11 +105,11 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <>
       <Card className="overflow-hidden hover:shadow-lg transition-shadow relative">
-        <Link href={`/catalog/${product.id}`} className="block relative h-36 md:h-48 overflow-hidden group">
+        <Link href={`/catalog/${product.id}`} className="block relative h-36 md:h-48 overflow-hidden group bg-gray-50">
           <img
             src={product.image}
             alt={name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
           />
           {/* Type badge - bottom right */}
           <div className="absolute bottom-1.5 right-1.5 md:bottom-2 md:right-2 bg-[var(--brand-pink)] text-white px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-sm font-medium z-10 shadow-sm">
@@ -151,11 +152,9 @@ export function ProductCard({ product }: ProductCardProps) {
             >
               -
             </Button>
-            <Input
-              type="number"
-              min="1"
+            <QuantityInput
               value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+              onChange={(v) => setQuantity(v)}
               className="h-7 md:h-8 text-center border-none bg-transparent focus-visible:ring-0 px-0 text-sm"
             />
             <Button
@@ -213,11 +212,9 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
             <div>
               <Label>{t.products.quantity}</Label>
-              <Input
-                type="number"
-                min="1"
+              <QuantityInput
                 value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                onChange={(v) => setQuantity(v)}
                 className="mt-2"
               />
             </div>

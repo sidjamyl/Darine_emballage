@@ -4,6 +4,7 @@ import { useLanguage } from '@/lib/language-context';
 import { useCart } from '@/lib/cart-context';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { QuantityInput } from '@/components/ui/quantity-input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -231,16 +232,10 @@ export default function CartPage() {
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
-                    <Input
-                      type="number"
-                      min="1"
+                    <QuantityInput
                       value={item.quantity}
-                      onChange={(e) =>
-                        updateQuantity(
-                          item.productId,
-                          parseInt(e.target.value) || 1,
-                          item.variantName
-                        )
+                      onChange={(val) =>
+                        updateQuantity(item.productId, val, item.variantName)
                       }
                       className="w-20"
                     />

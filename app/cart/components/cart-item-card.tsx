@@ -8,8 +8,8 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Trash2 } from 'lucide-react';
+import { QuantityInput } from '@/components/ui/quantity-input';
 import { CartItem } from '@/lib/types';
 
 interface CartItemCardProps {
@@ -47,16 +47,10 @@ export function CartItemCard({ item, onRemove, onUpdateQuantity }: CartItemCardP
             >
               <Trash2 className="h-4 w-4" />
             </Button>
-            <Input
-              type="number"
-              min="1"
+            <QuantityInput
               value={item.quantity}
-              onChange={(e) =>
-                onUpdateQuantity(
-                  item.productId,
-                  parseInt(e.target.value) || 1,
-                  item.variantName
-                )
+              onChange={(val) =>
+                onUpdateQuantity(item.productId, val, item.variantName)
               }
               className="w-20"
             />
